@@ -18,32 +18,28 @@ html, body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 500vh; /* 5 sekcji o pełnej wysokości */
+    height: 500vh; /* 5 pełnoekranowych sekcji */
 }
 
-/* Każda sekcja jako pełnoekranowa grafika */
+/* Każda sekcja */
 .slide {
     width: 100vw;
     height: 100vh;
-    background-size: cover; /* Dopasowanie obrazu do całego ekranu */
-    background-position: center; /* Wyśrodkowanie obrazu */
-    background-repeat: no-repeat; /* Brak powtarzania obrazu */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     scroll-snap-align: start;
 }
 
-/* Przewijanie całej strony sekcjami */
+/* Grafiki pełnoekranowe */
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Grafika dopasowana do całego ekranu */
+}
+    
+/* Przewijanie sekcjami */
 body {
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
-}
-
-/* Reguły dla urządzeń mobilnych */
-@media screen and (max-width: 768px) {
-    .slide {
-        background-size: contain; /* Dopasowanie obrazu bez przycięcia */
-    }
-
-    body {
-        overflow-y: scroll;
-    }
 }
