@@ -34,13 +34,24 @@ html, body {
 /* Grafiki pełnoekranowe */
 .slide img {
     width: 100%;
-    height: 100%;
-    object-fit: contain; /* Dopasowanie grafiki do ekranu bez przycinania */
-    background-color: #000; /* Czarny kolor tła w przypadku pustych przestrzeni */
+    height: auto;
+    max-height: 100%;
+    object-fit: contain; /* Dopasowanie grafiki do ekranu */
+    background-color: #000; /* Czarny kolor tła dla pustych przestrzeni */
 }
     
 /* Przewijanie sekcjami */
 body {
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
+}
+
+/* Reguły dla ekranów mobilnych */
+@media screen and (max-width: 768px) {
+    .slide img {
+        width: auto;
+        height: 100%;
+        max-width: 100%;
+        object-fit: contain; /* Pełne dopasowanie na mobilnych */
+    }
 }
