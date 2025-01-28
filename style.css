@@ -17,30 +17,41 @@ html, body {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 500vh; /* 5 pełnych ekranów */
+    height: 500vh; /* 5 pełnoekranowych sekcji */
 }
 
-/* Każda sekcja */
+/* Sekcje */
 .slide {
-    width: 100vw; /* Pełna szerokość przeglądarki */
-    height: 100vh; /* Pełna wysokość przeglądarki */
+    width: 100vw;
+    height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
     scroll-snap-align: start;
-    overflow: hidden; /* Ukrycie nadmiarowych części grafiki */
-    background-color: #000; /* Czarny kolor tła */
+    overflow: hidden;
+    background-color: #000;
 }
 
 /* Grafiki */
 .slide img {
     width: 100%;
-    height: 100%;
-    object-fit: cover; /* Pełne wypełnienie ekranu */
+    height: auto;
+    max-height: 100%; /* Dopasowanie do wysokości */
+    object-fit: contain; /* Proporcjonalne dopasowanie bez przycinania */
 }
-    
+
 /* Przewijanie sekcjami */
 body {
     overflow-y: scroll;
     scroll-snap-type: y mandatory;
+}
+
+/* Specjalne reguły dla ekranów mobilnych */
+@media screen and (max-width: 768px) {
+    .slide img {
+        width: auto; /* Dopasowanie szerokości do ekranu */
+        height: 100%; /* Skalowanie do pełnej wysokości */
+        max-width: 100%; /* Ograniczenie szerokości */
+        object-fit: contain; /* Zachowanie proporcji */
+    }
 }
