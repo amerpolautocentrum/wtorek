@@ -25,13 +25,10 @@ html, body {
 .slide {
     width: 100vw;
     height: 100vh;
-    background-size: cover; /* Dopasowanie obrazu do całego ekranu */
-    background-position: center center; /* Wyśrodkowanie obrazu */
+    background-size: contain; /* Utrzymanie proporcji bez przycinania */
+    background-position: top center; /* Wyrównanie do góry i centrowanie */
     background-repeat: no-repeat; /* Brak powtarzania obrazu */
     scroll-snap-align: start;
-    display: flex;
-    align-items: center; /* Wyśrodkowanie pionowe */
-    justify-content: center; /* Wyśrodkowanie poziome */
 }
 
 /* Przewijanie całej strony sekcjami */
