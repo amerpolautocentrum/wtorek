@@ -41,15 +41,16 @@ html, body {
     object-fit: contain;
 }
 
-/* Logo Facebooka na ostatniej stronie – poprawiona pozycja */
+/* Logo Facebooka – poprawione pozycjonowanie */
 .fb-logo {
     position: absolute;
-    bottom: 120px; /* Przesunięcie wyżej według PDF */
-    left: 80px; /* Przesunięcie w lewo według PDF */
+    bottom: 15%; /* Zapewnia, że nie jest na samym dole */
+    left: 60%; /* Przesunięcie w prawo o 60% szerokości strony */
+    transform: translateX(-50%); /* Środkowanie */
 }
 
 .fb-logo img {
-    width: 60px; /* Możesz dostosować rozmiar */
+    width: 54px; /* Zmniejszone o 10% */
     height: auto;
     transition: transform 0.3s ease;
 }
@@ -72,8 +73,9 @@ body {
     }
 
     .fb-logo {
-        bottom: 80px; /* Mniejsze przesunięcie na telefonach */
-        left: 50px;
+        bottom: 20%; /* Unosi ikonę wyżej na telefonach */
+        left: 50%; /* Pozycjonowanie bardziej na środku */
+        transform: translateX(-50%);
     }
 
     .fb-logo img {
