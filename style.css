@@ -46,17 +46,15 @@ html, body {
 /* Ikona Facebooka */
 .fb-logo {
     position: absolute;
-    bottom: calc(40px + 5%); /* Przesunięcie 5% do góry */
-    left: calc(55% + 5%); /* Przesunięcie 5% w prawo */
-    transform: translateX(-50%);
+    bottom: 40px; /* Standardowa wartość */
+    left: 55%; /* Bazowa pozycja */
+    transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
 }
 
 /* Nie zmieniamy wielkości ikony */
 .fb-logo img {
     width: 80px !important; /* Zachowana dotychczasowa wielkość */
     height: auto !important;
-    max-width: 80px !important;
-    max-height: 80px !important;
     transition: transform 0.3s ease;
 }
 
@@ -79,7 +77,8 @@ body {
     }
 
     .fb-logo {
-        bottom: calc(20px + 5%); /* Przesunięcie 5% do góry na telefonach */
-        left: calc(50% + 5%); /* Przesunięcie 5% w prawo na telefonach */
+        bottom: 20px; /* Dostosowanie dla telefonów */
+        left: 50%; /* Środkowanie na mobilnych */
+        transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
     }
 }
