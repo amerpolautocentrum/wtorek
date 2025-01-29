@@ -51,9 +51,9 @@ html, body {
     transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
 }
 
-/* Nie zmieniamy wielkości ikony */
+/* Zmniejszenie ikony Facebooka o 15% */
 .fb-logo img {
-    width: 80px !important; /* Zachowana dotychczasowa wielkość */
+    width: 68px !important; /* Poprzednio 80px, zmniejszone o 15% */
     height: auto !important;
     transition: transform 0.3s ease;
 }
@@ -80,5 +80,9 @@ body {
         bottom: 20px; /* Dostosowanie dla telefonów */
         left: 50%; /* Środkowanie na mobilnych */
         transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
+    }
+
+    .fb-logo img {
+        width: 57px !important; /* Poprzednio 67px, zmniejszone o 15% */
     }
 }
