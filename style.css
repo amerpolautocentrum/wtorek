@@ -36,9 +36,9 @@ html, body {
 
 /* Obrazy */
 .gallery-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Zapewnia wypełnienie ekranu i eliminuje czarne paski */
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     display: block;
     background-color: #000; /* Czarny margines wokół obrazów */
 }
@@ -48,12 +48,12 @@ html, body {
     position: absolute;
     bottom: 40px; /* Standardowa wartość */
     left: 55%; /* Bazowa pozycja */
-    transform: translate(5%, -5%);
+    transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
 }
 
-/* Zmniejszenie ikony Facebooka o 15% */
+/* Nie zmieniamy wielkości ikony */
 .fb-logo img {
-    width: 68px !important; /* Poprzednio 80px, zmniejszone o 15% */
+    width: 80px !important; /* Zachowana dotychczasowa wielkość */
     height: auto !important;
     transition: transform 0.3s ease;
 }
@@ -69,21 +69,16 @@ body {
     scroll-snap-type: y mandatory;
 }
 
-/* Dostosowanie do urządzeń mobilnych */
+/* Dostosowanie do ekranów mobilnych */
 @media screen and (max-width: 768px) {
     .gallery-image {
-        width: 100vw; /* Pełne dopasowanie do szerokości ekranu */
-        height: 100vh; /* Pełne dopasowanie do wysokości ekranu */
-        object-fit: cover; /* Zapewnia brak czarnych marginesów */
+        width: 100%;
+        height: auto;
     }
 
     .fb-logo {
-        bottom: 10%; /* Przesunięcie ikony lekko do góry w pionowym trybie */
+        bottom: 20px; /* Dostosowanie dla telefonów */
         left: 50%; /* Środkowanie na mobilnych */
-        transform: translate(-50%, 0);
-    }
-
-    .fb-logo img {
-        width: 57px !important; /* Poprzednio 67px, zmniejszone o 15% */
+        transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
     }
 }
