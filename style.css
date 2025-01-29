@@ -41,14 +41,13 @@ html, body {
 /* Ikona Facebooka */
 .fb-logo {
     position: absolute;
-    bottom: 20px; /* Dostosuj położenie w pionie */
-    left: calc(50% - 15mm); /* Przesunięcie 15 mm w lewo */
+    bottom: 40px; /* Możesz dostosować położenie w pionie */
+    left: 55%; /* Ustawienie pozycji na 55% szerokości strony */
     transform: translateX(-50%);
 }
 
 .fb-logo img {
-    width: 95%; /* Zmniejszenie o 5% */
-    max-width: 85px; /* Możesz dostosować wielkość */
+    width: 90px; /* Szerokość ikony */
     height: auto;
     transition: transform 0.3s ease;
 }
@@ -72,7 +71,11 @@ body {
     }
 
     .fb-logo {
-        bottom: 10px; /* Zmiana pozycji na telefonie */
-        left: 50%; /* Środkowanie */
+        bottom: 20px; /* Dostosowanie dla telefonów */
+        left: 50%; /* Środkowanie na mobilnych */
+    }
+
+    .fb-logo img {
+        width: 75px; /* Mniejsza ikona na telefonach */
     }
 }
