@@ -47,7 +47,7 @@ html, body {
 }
 
 .fb-logo img {
-    width: 90px; /* Szerokość ikony */
+    width: 81px; /* Zmniejszenie o 10% (poprzednio 90px) */
     height: auto;
     transition: transform 0.3s ease;
 }
@@ -76,6 +76,6 @@ body {
     }
 
     .fb-logo img {
-        width: 75px; /* Mniejsza ikona na telefonach */
+        width: 67px; /* Mniejsza ikona na telefonach (poprzednio 75px, zmniejszona o 10%) */
     }
 }
