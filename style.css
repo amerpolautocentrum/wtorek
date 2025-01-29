@@ -40,13 +40,6 @@ html, body {
     object-fit: contain; /* Proporcjonalne dopasowanie bez przycinania */
 }
 
-/* PDF Viewer */
-.pdf-viewer {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
 /* Przewijanie sekcjami */
 body {
     overflow-y: scroll;
@@ -60,10 +53,5 @@ body {
         height: 100%; /* Skalowanie do pełnej wysokości */
         max-width: 100%; /* Ograniczenie szerokości */
         object-fit: contain; /* Zachowanie proporcji */
-    }
-
-    .pdf-viewer {
-        width: 100%;
-        height: 100%;
     }
 }
