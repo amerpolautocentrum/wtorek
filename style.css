@@ -30,14 +30,32 @@ html, body {
     scroll-snap-align: start;
     overflow: hidden;
     background-color: #000;
+    position: relative;
 }
 
-/* Grafiki */
-.slide img {
+/* Grafiki SVG */
+.svg-image {
     width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+/* Logo Facebooka na ostatniej stronie */
+.fb-logo {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.fb-logo img {
+    width: 50px; /* Możesz dostosować rozmiar */
     height: auto;
-    max-height: 100%; /* Dopasowanie do wysokości */
-    object-fit: contain; /* Proporcjonalne dopasowanie bez przycinania */
+    transition: transform 0.3s ease;
+}
+
+.fb-logo img:hover {
+    transform: scale(1.1);
 }
 
 /* Przewijanie sekcjami */
@@ -48,10 +66,12 @@ body {
 
 /* Specjalne reguły dla ekranów mobilnych */
 @media screen and (max-width: 768px) {
-    .slide img {
-        width: auto; /* Dopasowanie szerokości do ekranu */
-        height: 100%; /* Skalowanie do pełnej wysokości */
-        max-width: 100%; /* Ograniczenie szerokości */
-        object-fit: contain; /* Zachowanie proporcji */
+    .svg-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .fb-logo img {
+        width: 40px; /* Mniejsze logo na telefonach */
     }
 }
