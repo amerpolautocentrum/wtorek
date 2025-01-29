@@ -51,7 +51,7 @@ html, body {
     transform: translateX(-50%);
 }
 
-/* Ostateczne zmniejszenie ikony Facebooka */
+/* Poprawiona nazwa pliku logofb.png oraz zmniejszenie ikony o 10% */
 .fb-logo img {
     width: 60px !important; /* Jeszcze mniejsze (poprzednio 72px) */
     height: auto !important;
