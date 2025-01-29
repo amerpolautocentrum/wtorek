@@ -33,23 +33,23 @@ html, body {
     position: relative;
 }
 
-/* Grafiki SVG */
-.svg-image {
+/* Grafiki PNG */
+.gallery-image {
     width: 100%;
-    height: 100%;
-    max-width: 100vw;
+    height: auto;
     max-height: 100vh;
+    object-fit: contain;
 }
 
-/* Logo Facebooka na ostatniej stronie */
+/* Logo Facebooka na ostatniej stronie – poprawiona pozycja */
 .fb-logo {
     position: absolute;
-    bottom: 20px;
-    right: 20px;
+    bottom: 120px; /* Przesunięcie wyżej według PDF */
+    left: 80px; /* Przesunięcie w lewo według PDF */
 }
 
 .fb-logo img {
-    width: 50px; /* Możesz dostosować rozmiar */
+    width: 60px; /* Możesz dostosować rozmiar */
     height: auto;
     transition: transform 0.3s ease;
 }
@@ -66,9 +66,14 @@ body {
 
 /* Specjalne reguły dla ekranów mobilnych */
 @media screen and (max-width: 768px) {
-    .svg-image {
+    .gallery-image {
         width: 100%;
         height: auto;
+    }
+
+    .fb-logo {
+        bottom: 80px; /* Mniejsze przesunięcie na telefonach */
+        left: 50px;
     }
 
     .fb-logo img {
