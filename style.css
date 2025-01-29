@@ -46,9 +46,12 @@ html, body {
     transform: translateX(-50%);
 }
 
+/* Nowe podejście do zmniejszenia ikony */
 .fb-logo img {
-    width: 81px; /* Zmniejszenie o 10% (poprzednio 90px) */
-    height: auto;
+    width: 72px !important; /* Zmniejszenie o dokładnie 10% z 80px */
+    height: auto !important;
+    max-width: 72px !important;
+    max-height: 72px !important;
     transition: transform 0.3s ease;
 }
 
@@ -76,6 +79,8 @@ body {
     }
 
     .fb-logo img {
-        width: 67px; /* Mniejsza ikona na telefonach (poprzednio 75px, zmniejszona o 10%) */
+        width: 60px !important; /* Mniejsza ikona na telefonach */
+        max-width: 60px !important;
+        max-height: 60px !important;
     }
 }
