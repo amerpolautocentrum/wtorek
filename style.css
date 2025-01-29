@@ -8,7 +8,7 @@ html, body {
     height: 100%;
     width: 100%;
     scroll-behavior: smooth;
-    background-color: #f4f4f4;
+    background-color: #000; /* Przywrócenie czarnego tła */
 }
 
 /* Galeria */
@@ -29,6 +29,7 @@ html, body {
     scroll-snap-align: start;
     overflow: hidden;
     position: relative;
+    background-color: #000; /* Czarny kolor sekcji */
 }
 
 /* Obrazy */
@@ -36,6 +37,7 @@ html, body {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    background-color: #000; /* Czarny margines wokół obrazów */
 }
 
 /* Ikona Facebooka */
