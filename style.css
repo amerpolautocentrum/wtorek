@@ -50,42 +50,12 @@ html, body {
     left: 50%; /* Centrowanie */
     transform: translateX(-50%);
     display: flex;
-    gap: 15px; /* Odstęp między ikonami */
+    gap: 20px; /* Odstęp między ikonami */
 }
 
 /* Ikony Facebooka i TikToka */
 .social-icon {
-    width: 80px !important; /* Ustawienie jednakowego rozmiaru */
+    width: 160px !important; /* Powiększenie ikon o 100% */
     height: auto !important;
-    transition: transform 0.3s ease;
-}
-
-/* Powiększenie ikon przy najechaniu */
-.social-icon:hover {
-    transform: scale(1.1);
-}
-
-/* Przewijanie sekcjami */
-body {
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-}
-
-/* Dostosowanie do ekranów mobilnych */
-@media screen and (max-width: 768px) {
-    .gallery-image {
-        width: 100%;
-        height: auto;
-    }
-
-    .social-logos {
-        bottom: 20px; /* Dostosowanie dla telefonów */
-        left: 50%; /* Środkowanie na mobilnych */
-        transform: translateX(-50%);
-        gap: 10px;
-    }
-
-    .social-icon {
-        width: 60px !important; /* Mniejsza ikona na telefonach */
-    }
-}
+    display: block;
+    transition: transfo
