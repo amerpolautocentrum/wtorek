@@ -43,23 +43,27 @@ html, body {
     background-color: #000; /* Czarny margines wokół obrazów */
 }
 
-/* Ikona Facebooka */
-.fb-logo {
+/* Kontener na ikony */
+.social-logos {
     position: absolute;
-    bottom: 40px; /* Standardowa wartość */
-    left: 55%; /* Bazowa pozycja */
-    transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
+    bottom: 40px;
+    left: 50%; /* Centrowanie */
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px; /* Odstęp między ikonami */
+    align-items: center;
 }
 
-/* Nie zmieniamy wielkości ikony */
-.fb-logo img {
-    width: 80px !important; /* Zachowana dotychczasowa wielkość */
+/* Ikony Facebooka i TikToka */
+.social-icon {
+    width: 140px !important; /* Ustawienie jednakowego rozmiaru na komputerach */
     height: auto !important;
+    display: block;
     transition: transform 0.3s ease;
 }
 
-/* Powiększenie ikony przy najechaniu */
-.fb-logo img:hover {
+/* Powiększenie ikon przy najechaniu */
+.social-icon:hover {
     transform: scale(1.1);
 }
 
@@ -76,9 +80,14 @@ body {
         height: auto;
     }
 
-    .fb-logo {
+    .social-logos {
         bottom: 20px; /* Dostosowanie dla telefonów */
         left: 50%; /* Środkowanie na mobilnych */
-        transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
+        transform: translateX(-50%);
+        gap: 15px;
+    }
+
+    .social-icon {
+        width: 100px !important; /* Większa ikona na telefonach */
     }
 }

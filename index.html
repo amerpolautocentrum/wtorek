@@ -1,78 +1,28 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-    width: 100%;
-    scroll-behavior: smooth;
-    background-color: #f4f4f4;
-}
-
-/* Galeria */
-.gallery {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 500vh; /* 5 pełnoekranowych sekcji */
-}
-
-/* Sekcje */
-.slide {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    overflow: hidden;
-    position: relative;
-}
-
-/* Obrazy */
-.gallery-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-}
-
-/* Ikona Facebooka */
-.fb-logo {
-    position: absolute;
-    bottom: 20px; /* Dostosuj położenie w pionie */
-    left: calc(50% - 15mm); /* Przesunięcie 15 mm w lewo */
-    transform: translateX(-50%);
-}
-
-.fb-logo img {
-    width: 95%; /* Zmniejszenie o 5% */
-    max-width: 85px; /* Możesz dostosować wielkość */
-    height: auto;
-    transition: transform 0.3s ease;
-}
-
-/* Powiększenie ikony przy najechaniu */
-.fb-logo img:hover {
-    transform: scale(1.1);
-}
-
-/* Przewijanie sekcjami */
-body {
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-}
-
-/* Dostosowanie do ekranów mobilnych */
-@media screen and (max-width: 768px) {
-    .gallery-image {
-        width: 100%;
-        height: auto;
-    }
-
-    .fb-logo {
-        bottom: 10px; /* Zmiana pozycji na telefonie */
-        left: 50%; /* Środkowanie */
-    }
-}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gallery">
+        <section class="slide"><img src="grafika1.png" class="gallery-image" alt="Grafika 1"></section>
+        <section class="slide"><img src="grafika2.png" class="gallery-image" alt="Grafika 2"></section>
+        <section class="slide"><img src="grafika3.png" class="gallery-image" alt="Grafika 3"></section>
+        <section class="slide"><img src="grafika4.png" class="gallery-image" alt="Grafika 4"></section>
+        <section class="slide">
+            <img src="grafika5.png" class="gallery-image" alt="Grafika 5">
+            <div class="social-logos">
+                <a href="https://www.facebook.com/profile.php?id=61572505500002" target="_blank">
+                    <img src="logofb.png" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://www.tiktok.com/@amerpol.auto.cent" target="_blank">
+                    <img src="tiktok.png" alt="TikTok" class="social-icon">
+                </a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
