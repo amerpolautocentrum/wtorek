@@ -1,53 +1,8 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-html, body {
-    height: 100%;
-    width: 100%;
-    scroll-behavior: smooth;
-    background-color: #000; /* Przywrócenie czarnego tła */
-    overflow-x: hidden;
-}
-
-/* Galeria */
-.gallery {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 500vh; /* 5 pełnoekranowych sekcji */
-    background-color: #000; /* Czarny kolor galerii */
-}
-
-/* Sekcje */
-.slide {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    overflow: hidden;
-    position: relative;
-    background-color: #000; /* Czarny kolor sekcji */
-}
-
-/* Obrazy */
-.gallery-image {
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain;
-    display: block;
-    background-color: #000; /* Czarny margines wokół obrazów */
-}
-
 /* Przycisk "Blog" na grafika3 */
 .blog-button {
     position: absolute;
-    bottom: 15%; /* Ustalone względem wysokości ekranu */
-    right: 5%; /* Przesunięcie od prawej krawędzi */
+    bottom: 265px; /* 7 cm od dołu */
+    right: 190px; /* 5 cm od prawej krawędzi */
     background-color: #cc0000; /* Czerwony kolor */
     padding: 12px 24px;
     font-size: 18px;
@@ -67,49 +22,11 @@ html, body {
     background-color: #ff0000;
 }
 
-/* Poprawione rozmiary ikon Facebooka i TikToka */
-.social-logos {
-    position: absolute;
-    bottom: 5%; /* Zmiana pozycji, żeby były nad dolną krawędzią */
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px; /* Odstęp między ikonami */
-}
-
-.social-icon {
-    width: 80px !important; /* Powrót do normalnego rozmiaru */
-    height: auto !important;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-/* Powiększenie ikon przy najechaniu */
-.social-icon:hover {
-    transform: scale(1.1);
-}
-
 /* Dostosowanie do ekranów mobilnych */
 @media screen and (max-width: 768px) {
-    .gallery-image {
-        width: 100vw;
-        height: 100vh;
-    }
-
-    .social-logos {
-        bottom: 10%; /* Dostosowanie dla telefonów */
-        left: 50%;
-        transform: translateX(-50%);
-        gap: 10px;
-    }
-
-    .social-icon {
-        width: 60px !important; /* Mniejsze ikony na telefonach */
-    }
-
     .blog-button {
-        bottom: 20%; /* Przesunięcie do góry na telefonach */
-        right: 10%;
+        bottom: 150px; /* Przesunięcie dla telefonów */
+        right: 100px;
         font-size: 16px;
         padding: 10px 20px;
     }
