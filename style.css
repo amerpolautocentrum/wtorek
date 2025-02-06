@@ -1,50 +1,84 @@
-/* Przycisk "Blog" na grafika3 */
-.blog-button {
-    position: absolute;
-    bottom: 265px; /* 7 cm od dołu */
-    right: 190px;  /* 5 cm od prawej krawędzi */
-    background-color: #D4AF37; /* Złoty kolor jak "Amerykański sen" */
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 8px;
-    text-align: center;
-    transition: 0.3s;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.blog-button a {
-    text-decoration: none;
-    color: #000; /* Czarny napis dla kontrastu */
+html, body {
+    height: 100%;
+    width: 100%;
+    scroll-behavior: smooth;
+    background-color: #000; /* Przywrócenie czarnego tła */
+    overflow-x: hidden;
 }
 
-.blog-button:hover {
-    background-color: #C19A2E; /* Delikatnie ciemniejszy złoty przy najechaniu */
+/* Galeria */
+.gallery {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 500vh; /* 5 pełnoekranowych sekcji */
+    background-color: #000; /* Czarny kolor galerii */
 }
 
-/* Naprawione rozmiary ikon Facebook i TikTok */
-.social-icon {
-    width: 100px !important; /* Powrót do odpowiedniego rozmiaru */
-    height: auto !important;
+/* Sekcje */
+.slide {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: start;
+    overflow: hidden;
+    position: relative;
+    background-color: #000; /* Czarny kolor sekcji */
+}
+
+/* Obrazy */
+.gallery-image {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
     display: block;
+    background-color: #000; /* Czarny margines wokół obrazów */
+}
+
+/* Ikona Facebooka */
+.fb-logo {
+    position: absolute;
+    bottom: 40px; /* Standardowa wartość */
+    left: 55%; /* Bazowa pozycja */
+    transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
+}
+
+/* Nie zmieniamy wielkości ikony */
+.fb-logo img {
+    width: 80px !important; /* Zachowana dotychczasowa wielkość */
+    height: auto !important;
     transition: transform 0.3s ease;
 }
 
-/* Powiększenie ikon przy najechaniu */
-.social-icon:hover {
+/* Powiększenie ikony przy najechaniu */
+.fb-logo img:hover {
     transform: scale(1.1);
+}
+
+/* Przewijanie sekcjami */
+body {
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
 }
 
 /* Dostosowanie do ekranów mobilnych */
 @media screen and (max-width: 768px) {
-    .blog-button {
-        bottom: 150px; /* Zmniejszone przesunięcie dla telefonów */
-        right: 100px;
-        font-size: 16px;
-        padding: 10px 20px;
+    .gallery-image {
+        width: 100%;
+        height: auto;
     }
 
-    .social-icon {
-        width: 80px !important; /* Mniejsze ikony na telefonach */
+    .fb-logo {
+        bottom: 20px; /* Dostosowanie dla telefonów */
+        left: 50%; /* Środkowanie na mobilnych */
+        transform: translate(5%, -5%); /* Przesunięcie o 5% w prawo i 5% do góry */
     }
 }
