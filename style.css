@@ -1,8 +1,8 @@
 /* Przycisk "Blog" na grafika3 */
 .blog-button {
     position: absolute;
-    bottom: 200px; /* Poprawione położenie - dostosowane do 7 cm */
-    right: 140px; /* Poprawione położenie - dostosowane do 5 cm */
+    bottom: 200px; /* Dostosowane do 7 cm */
+    right: 140px; /* Dostosowane do 5 cm */
     background-color: #cc0000; /* Czerwony kolor */
     padding: 12px 24px;
     font-size: 18px;
@@ -20,4 +20,17 @@
 
 .blog-button:hover {
     background-color: #ff0000;
+}
+
+/* Poprawione rozmiary ikon Facebooka i TikToka */
+.social-icon {
+    width: 80px !important; /* Powrót do normalnego rozmiaru */
+    height: auto !important;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+/* Powiększenie ikon przy najechaniu */
+.social-icon:hover {
+    transform: scale(1.1);
 }
