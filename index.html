@@ -1,50 +1,33 @@
-.blog-button {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background-color: #cc0000; /* Czerwony kolor */
-    padding: 12px 24px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 8px;
-    text-align: center;
-    transition: 0.3s;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
-}
-
-.blog-button a {
-    text-decoration: none;
-    color: #fff;
-}
-
-.blog-button:hover {
-    background-color: #ff0000;
-}
-
-/* Naprawa dopasowania stron */
-.gallery {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 500vh; /* 5 pełnoekranowych sekcji */
-    background-color: #000; /* Czarny kolor galerii */
-}
-
-.slide {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    overflow: hidden;
-    position: relative;
-    background-color: #000;
-}
-
-.gallery-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    display: block;
-}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amer-Pol Auto Centrum</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="gallery">
+        <section class="slide"><img src="grafika1.png" class="gallery-image" alt="Grafika 1"></section>
+        <section class="slide"><img src="grafika2.png" class="gallery-image" alt="Grafika 2"></section>
+        <section class="slide">
+            <img src="grafika3.png" class="gallery-image" alt="Grafika 3">
+            <div class="blog-button">
+                <a href="blog.html">📖 Przejdź do bloga</a>
+            </div>
+        </section>
+        <section class="slide"><img src="grafika4.png" class="gallery-image" alt="Grafika 4"></section>
+        <section class="slide">
+            <img src="grafika5.png" class="gallery-image" alt="Grafika 5">
+            <div class="social-logos">
+                <a href="https://www.facebook.com/profile.php?id=61572505500002" target="_blank">
+                    <img src="logofb.png" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://www.tiktok.com/@amerpol.auto.cent" target="_blank">
+                    <img src="tiktok.png" alt="TikTok" class="social-icon">
+                </a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
