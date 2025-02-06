@@ -1,3 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    scroll-behavior: smooth;
+    background-color: #000;
+    overflow-x: hidden;
+}
+
+/* Galeria */
+.gallery {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 500vh;
+    background-color: #000;
+}
+
+/* Sekcje */
+.slide {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    scroll-snap-align: start;
+    overflow: hidden;
+    position: relative;
+    background-color: #000;
+}
+
+/* Obrazy */
+.gallery-image {
+    width: 100vw;
+    height: 100vh;
+    object-fit: contain;
+    display: block;
+    background-color: #000;
+}
+
 /* Przycisk "Blog" na grafika3 */
 .blog-button {
     position: absolute;
@@ -6,7 +51,7 @@
     background-color: #ff4c4c; /* Nowy kolor z Canvy */
     padding: 12px 24px;
     font-size: 22px; /* Powiększona czcionka */
-    font-family: 'Barlow Condensed', sans-serif; /* Nowa czcionka */
+    font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
     border-radius: 8px;
     text-align: center;
@@ -20,15 +65,53 @@
 }
 
 .blog-button:hover {
-    background-color: #e64444; /* Delikatnie ciemniejszy odcień przy najechaniu */
+    background-color: #e64444;
+}
+
+/* Poprawione ikony Facebooka i TikToka */
+.social-logos {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+}
+
+.social-icon {
+    width: 80px !important; /* Normalny rozmiar ikon */
+    height: auto !important;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+/* Powiększenie ikon przy najechaniu */
+.social-icon:hover {
+    transform: scale(1.1);
 }
 
 /* Dostosowanie do ekranów mobilnych */
 @media screen and (max-width: 768px) {
+    .gallery-image {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .social-logos {
+        bottom: 10%;
+        left: 50%;
+        transform: translateX(-50%);
+        gap: 10px;
+    }
+
+    .social-icon {
+        width: 60px !important; /* Mniejsze ikony na telefonach */
+    }
+
     .blog-button {
-        bottom: 150px; /* Przesunięcie dla telefonów */
+        bottom: 150px;
         right: 100px;
-        font-size: 20px; /* Też zwiększone na telefonach */
+        font-size: 20px;
         padding: 10px 20px;
     }
 }
