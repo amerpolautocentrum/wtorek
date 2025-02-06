@@ -43,6 +43,30 @@ html, body {
     background-color: #000; /* Czarny margines wokół obrazów */
 }
 
+/* Przycisk "Blog" na grafika3 */
+.blog-button {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: #cc0000; /* Czerwony kolor */
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 8px;
+    text-align: center;
+    transition: 0.3s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.blog-button a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.blog-button:hover {
+    background-color: #ff0000;
+}
+
 /* Kontener na ikony */
 .social-logos {
     position: absolute;
@@ -51,12 +75,11 @@ html, body {
     transform: translateX(-50%);
     display: flex;
     gap: 20px; /* Odstęp między ikonami */
-    align-items: center;
 }
 
 /* Ikony Facebooka i TikToka */
 .social-icon {
-    width: 140px !important; /* Ustawienie jednakowego rozmiaru na komputerach */
+    width: 160px !important; /* Powiększenie ikon o 100% */
     height: auto !important;
     display: block;
     transition: transform 0.3s ease;
@@ -88,6 +111,13 @@ body {
     }
 
     .social-icon {
-        width: 100px !important; /* Większa ikona na telefonach */
+        width: 120px !important; /* Mniejsza ikona na telefonach, ale nadal większa niż wcześniej */
+    }
+
+    .blog-button {
+        bottom: 10px;
+        right: 10px;
+        font-size: 16px;
+        padding: 10px 20px;
     }
 }
