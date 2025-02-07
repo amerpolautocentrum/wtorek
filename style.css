@@ -1,117 +1,70 @@
-* {
+/* Styl dla bloga */
+body {
+    background-color: #f4f4f4; /* Jasne tło zamiast czarnego */
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    color: #333;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
-html, body {
-    height: 100%;
-    width: 100%;
-    scroll-behavior: smooth;
-    background-color: #000;
-    overflow-x: hidden;
+/* Kontener treści */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Galeria */
-.gallery {
-    display: flex;
-    flex-direction: column;
-    width: 100vw;
-    height: 500vh;
-    background-color: #000;
-}
-
-/* Sekcje */
-.slide {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    scroll-snap-align: start;
-    overflow: hidden;
-    position: relative;
-    background-color: #000;
-}
-
-/* Obrazy */
-.gallery-image {
-    width: 100vw;
-    height: 100vh;
-    object-fit: contain;
-    display: block;
-    background-color: #000;
-}
-
-/* Przycisk "Blog" na grafika3 */
-.blog-button {
-    position: absolute;
-    bottom: 265px; /* 7 cm od dołu */
-    right: 190px; /* 5 cm od prawej krawędzi */
-    background-color: #ff4c4c; /* Nowy kolor z Canvy */
-    padding: 12px 24px;
-    font-size: 22px; /* Powiększona czcionka */
-    font-family: 'Barlow Condensed', sans-serif;
-    font-weight: 700;
-    border-radius: 8px;
+/* Nagłówek */
+.blog-header {
     text-align: center;
-    transition: 0.3s;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+    padding: 40px 0;
+    background: #cc0000;
+    color: white;
+    font-size: 36px;
+    font-weight: bold;
 }
 
-.blog-button a {
-    text-decoration: none;
-    color: #fff;
+/* Nagłówki */
+h1 {
+    text-align: center;
+    font-size: 32px;
+    color: #ff4c4c;
+    margin-bottom: 20px;
 }
 
-.blog-button:hover {
-    background-color: #e64444;
+h2 {
+    font-size: 26px;
+    color: #cc0000;
+    margin-top: 20px;
 }
 
-/* Poprawione ikony Facebooka i TikToka */
-.social-logos {
-    position: absolute;
-    bottom: 40px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 20px;
+/* Akapit */
+p {
+    text-align: justify;
+    margin-bottom: 15px;
 }
 
-.social-icon {
-    width: 80px !important; /* Normalny rozmiar ikon */
-    height: auto !important;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-/* Powiększenie ikon przy najechaniu */
-.social-icon:hover {
-    transform: scale(1.1);
-}
-
-/* Dostosowanie do ekranów mobilnych */
+/* Responsywność */
 @media screen and (max-width: 768px) {
-    .gallery-image {
-        width: 100vw;
-        height: 100vh;
+    .container {
+        width: 90%;
+        padding: 15px;
     }
 
-    .social-logos {
-        bottom: 10%;
-        left: 50%;
-        transform: translateX(-50%);
-        gap: 10px;
+    h1 {
+        font-size: 28px;
     }
 
-    .social-icon {
-        width: 60px !important; /* Mniejsze ikony na telefonach */
+    h2 {
+        font-size: 22px;
     }
 
-    .blog-button {
-        bottom: 150px;
-        right: 100px;
+    p {
         font-size: 20px;
-        padding: 10px 20px;
     }
 }
