@@ -33,8 +33,8 @@ body {
 
 /* Grafiki we wpisach blogowych */
 .container img {
-    max-width: 80%; /* Zmniejszenie szerokości do 80% kontenera */
-    max-height: 350px; /* Ograniczenie maksymalnej wysokości */
+    width: 40%; /* Obrazek będzie 40% szerokości kontenera */
+    max-height: 250px; /* Ograniczenie maksymalnej wysokości */
     height: auto; /* Zachowanie proporcji */
     display: block;
     margin: 20px auto; /* Centrowanie obrazka */
