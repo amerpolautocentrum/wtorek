@@ -10,10 +10,12 @@ body {
 /* Nagłówek */
 .blog-header {
     text-align: center;
-    padding: 40px;
+    padding: 20px;
     background: #cc0000;
     color: white;
-    font-size: 36px;
+    font-size: 28px;
+}
+
 }
 
 .blog-subtitle {
