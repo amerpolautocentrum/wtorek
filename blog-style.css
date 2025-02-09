@@ -31,9 +31,9 @@ body {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Grafiki we wpisach blogowych */
+/* Grafiki WE WPISACH blogowych */
 .container img {
-    width: 40%; /* Obrazek będzie 40% szerokości kontenera */
+    width: 40%; /* Zmniejszenie szerokości do 40% kontenera */
     max-height: 250px; /* Ograniczenie maksymalnej wysokości */
     height: auto; /* Zachowanie proporcji */
     display: block;
@@ -42,7 +42,7 @@ body {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Lekki cień */
 }
 
-/* Lista artykułów */
+/* LISTA ARTYKUŁÓW – PRZYCISKI DO BLOGÓW */
 .article-list {
     display: flex;
     flex-direction: column;
@@ -58,6 +58,15 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     transition: 0.3s;
     background: none;
+}
+
+/* Przywrócenie wyglądu obrazków w przyciskach do blogów */
+.article-list img {
+    width: 200px; /* Stała szerokość dla przycisków */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: none;
+    margin: 0;
 }
 
 /* Usunięcie podkreślenia linków */
