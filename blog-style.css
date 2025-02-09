@@ -65,17 +65,21 @@ body {
     flex-direction: column;
 }
 
+/* Usunięcie podkreślenia linków */
+.article-list a {
+    text-decoration: none;
+}
+
 /* Zmiana stylu nagłówków artykułów */
 .article-list h3 {
-    font-size: 26px; /* Powiększona czcionka */
+    font-size: 26px;
     color: #cc0000;
     font-weight: bold;
-    text-decoration: none; /* Usunięcie podkreślenia */
 }
 
 /* Poprawiony opis artykułów */
 .article-list p {
-    font-size: 20px; /* Powiększona czcionka */
+    font-size: 20px;
     color: #333;
     font-weight: normal;
     overflow: hidden;
