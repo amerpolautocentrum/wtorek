@@ -65,11 +65,17 @@ body {
     display: none;
 }
 
-/* Poprawienie wyświetlania tekstu na przyciskach */
-.article-list h3 {
+/* Naprawa podkreśleń i formatowania */
+.article-list a {
+    text-decoration: none; /* Usunięcie podkreślenia */
+}
+
+/* Pierwsza linia w przycisku - wyróżniona */
+.article-list p strong {
     font-size: 24px; /* Większa czcionka */
-    color: #cc0000;
+    color: #cc0000; /* Przywrócenie koloru */
     font-weight: bold;
+    display: block; /* Sprawia, że tekst nie łamie się dziwnie */
 }
 
 /* Druga linia w przycisku - standardowa */
