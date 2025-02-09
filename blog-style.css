@@ -68,10 +68,12 @@ body {
 }
 
 .article-list h3 {
-    font-size: 24px;
+    font-size: 22px;
     color: #cc0000;
     font-weight: bold;
-    text-decoration: none; /* Usunięcie podkreślenia */
+    text-decoration: none;
+}
+
 }
 
 .article-list p {
