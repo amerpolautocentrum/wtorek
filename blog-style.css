@@ -31,7 +31,18 @@ body {
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* LISTA ARTYKUŁÓW – PRZYCISKI DO BLOGÓW */
+/* Zmniejszone grafiki we wpisach blogowych */
+.container img {
+    width: 40%;
+    max-height: 250px;
+    height: auto;
+    display: block;
+    margin: 20px auto;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Lista artykułów – przyciski do blogów */
 .article-list {
     display: flex;
     flex-direction: column;
@@ -74,7 +85,7 @@ body {
     font-weight: normal;
 }
 
-/* Przyciski powrotu */
+/* Przyciski powrotu – nowy design */
 .back-home, .back-link {
     display: inline-block;
     margin-top: 30px;
@@ -92,7 +103,7 @@ body {
     font-size: 20px;
 }
 
-/* Efekt hover - lekkie podświetlenie */
+/* Efekt hover – lekkie podświetlenie */
 .back-home:hover, .back-link:hover {
     background: linear-gradient(135deg, #a00000, #ff3333);
     transform: scale(1.05);
