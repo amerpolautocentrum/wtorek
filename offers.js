@@ -23,7 +23,7 @@ async function fetchOffers(offset = 0, limit = 100, retries = 3) {
                 console.error("Wyczerpano próby pobierania ofert!");
                 return { offers: [] };
             }
-            await new Promise(resolve => setTimeout(resolve, 1000)); // Czekamy 1s przed ponowieniem
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
 }
@@ -73,7 +73,6 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-    // Lista marek wielowyrazowych
     const knownBrands = ["Alfa Romeo", "Volkswagen", "Volvo", "Land Rover"];
     const brands = [...new Set(offers.map(offer => {
         const parts = offer.name.split(" ");
@@ -104,77 +103,4 @@ function populateFilters(offers) {
     years.forEach(year => {
         const fromOption = document.createElement("option");
         fromOption.value = year;
-        fromOption.textContent = year;
-        yearFromSelect.appendChild(fromOption);
-
-        const toOption = document.createElement("option");
-        toOption.value = year;
-        toOption.textContent = year;
-        yearToSelect.appendChild(toOption);
-    });
-
-    const prices = [...new Set(offers.map(offer => parseFloat(offer.sellingMode.price.amount)))].sort((a, b) => a - b);
-    const priceMinSelect = document.getElementById("priceMin");
-    const priceMaxSelect = document.getElementById("priceMax");
-    priceMinSelect.innerHTML = '<option value="">Cena min</option>';
-    priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
-    prices.forEach(price => {
-        const minOption = document.createElement("option");
-        minOption.value = price;
-        minOption.textContent = `${price} PLN`;
-        priceMinSelect.appendChild(minOption);
-
-        const maxOption = document.createElement("option");
-        maxOption.value = price;
-        maxOption.textContent = `${price} PLN`;
-        priceMaxSelect.appendChild(maxOption);
-    });
-}
-
-function updateModels() {
-    const brand = document.getElementById("brand").value;
-    const modelSelect = document.getElementById("model");
-    modelSelect.innerHTML = '<option value="">Wybierz model</option>';
-
-    if (brand) {
-        const filteredOffers = allOffers.filter(offer => offer.name.startsWith(brand));
-        const models = [...new Set(filteredOffers.map(offer => {
-            const parts = offer.name.split(" ");
-            const brandWords = brand.split(" ").length;
-            return parts.slice(brandWords, brandWords + 2).join(" "); // Pełny model (np. "XC90", "Range Rover")
-        }))].sort();
-        models.forEach(model => {
-            const option = document.createElement("option");
-            option.value = model;
-            option.textContent = model;
-            modelSelect.appendChild(option);
-        });
-    }
-}
-
-function filterOffers() {
-    const brand = document.getElementById("brand").value;
-    const model = document.getElementById("model").value;
-    const yearFrom = document.getElementById("yearFrom").value;
-    const yearTo = document.getElementById("yearTo").value;
-    const priceMin = parseFloat(document.getElementById("priceMin").value) || 0;
-    const priceMax = parseFloat(document.getElementById("priceMax").value) || Infinity;
-
-    const filteredOffers = allOffers.filter(offer => {
-        const title = offer.name;
-        const price = parseFloat(offer.sellingMode.price.amount);
-        const year = title.match(/\d{4}/)?.[0] || "";
-        return (
-            (!brand || title.startsWith(brand)) &&
-            (!model || title.includes(model)) &&
-            (!yearFrom || parseInt(year) >= parseInt(yearFrom)) &&
-            (!yearTo || parseInt(year) <= parseInt(yearTo)) &&
-            price >= priceMin &&
-            price <= priceMax
-        );
-    });
-
-    displayOffers(filteredOffers);
-}
-
-loadAllOffers();
+       
