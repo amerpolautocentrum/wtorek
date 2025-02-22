@@ -3,7 +3,7 @@ let allOffers = [];
 
 async function fetchOffers(offset = 0, limit = 100) {
     try {
-        const response = await fetch(`https://thingproxy.freeboard.io/fetch/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}`, {
+        const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}`, {
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
                 "Accept": "application/vnd.allegro.public.v1+json"
