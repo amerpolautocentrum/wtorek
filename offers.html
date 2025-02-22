@@ -17,12 +17,24 @@
     <div class="offers-page">
         <h1>Nasze oferty</h1>
         <div id="filters">
-            <input type="text" id="search" placeholder="Szukaj...">
             <select id="brand">
-                <option value="">Marka</option>
+                <option value="">Wybierz markę</option>
             </select>
-            <input type="number" id="minPrice" placeholder="Min. cena">
-            <input type="number" id="maxPrice" placeholder="Max. cena">
+            <select id="model">
+                <option value="">Wybierz model</option>
+            </select>
+            <select id="yearFrom">
+                <option value="">Rocznik od</option>
+            </select>
+            <select id="yearTo">
+                <option value="">Rocznik do</option>
+            </select>
+            <select id="priceMin">
+                <option value="">Cena min</option>
+            </select>
+            <select id="priceMax">
+                <option value="">Cena max</option>
+            </select>
             <button onclick="filterOffers()">Filtruj</button>
         </div>
         <div id="offers-container"></div>
