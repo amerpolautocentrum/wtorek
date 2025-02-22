@@ -23,7 +23,6 @@ async function fetchOffers(offset = 0, limit = 100) {
 }
 
 async function loadAllOffers() {
-    // Pierwsze żądanie – pobieramy 100 ofert i wyświetlamy 8 najnowszych od razu
     const firstBatch = await fetchOffers(0, 100);
     allOffers = firstBatch.offers;
     if (allOffers.length === 0) {
@@ -32,14 +31,10 @@ async function loadAllOffers() {
         return;
     }
 
-    // Wyświetlamy 8 najnowszych z pierwszej partii
     const latestOffers = allOffers.slice(0, 8);
     displayOffers(latestOffers);
-
-    // Wypełniamy filtry wstępnie
     populateFilters(allOffers);
 
-    // Pobieramy resztę ofert w tle
     const limit = 100;
     let offset = limit;
     const totalCount = firstBatch.totalCount || 0;
@@ -50,7 +45,6 @@ async function loadAllOffers() {
         offset += limit;
     }
 
-    // Po pobraniu wszystkich aktualizujemy filtry
     populateFilters(allOffers);
 }
 
@@ -73,7 +67,17 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-    const brands = [...new Set(offers.map(offer => offer.name.split(" ")[0]))].sort();
+    // Lista marek z uwzględnieniem wielowyrazowych nazw
+    const knownBrands = ["Alfa Romeo", "Volkswagen", "Volvo", "Audi"]; // Możesz rozszerzyć listę
+    const brands = [...new Set(offers.map(offer => {
+        const parts = offer.name.split(" ");
+        // Sprawdzamy, czy marka jest wielowyrazowa
+        if (knownBrands.includes(`${parts[0]} ${parts[1]}`)) {
+            return `${parts[0]} ${parts[1]}`;
+        }
+        return parts[0];
+    }))].sort();
+
     const brandSelect = document.getElementById("brand");
     brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
     brands.forEach(brand => {
@@ -129,7 +133,9 @@ function updateModels() {
         const filteredOffers = allOffers.filter(offer => offer.name.startsWith(brand));
         const models = [...new Set(filteredOffers.map(offer => {
             const parts = offer.name.split(" ");
-            return parts[1];
+            // Dla marek wielowyrazowych bierzemy od 3. słowa, dla jednowyrazowych od 2.
+            const brandWords = brand.split(" ").length;
+            return parts.slice(brandWords, brandWords + 2).join(" "); // Bierzemy model (np. "XC90", "Stelvio")
         }))].sort();
         models.forEach(model => {
             const option = document.createElement("option");
@@ -153,7 +159,7 @@ function filterOffers() {
         const price = parseFloat(offer.sellingMode.price.amount);
         const year = title.match(/\d{4}/)?.[0] || "";
         return (
-            (!brand || title.includes(brand)) &&
+            (!brand || title.startsWith(brand)) &&
             (!model || title.includes(model)) &&
             (!yearFrom || parseInt(year) >= parseInt(yearFrom)) &&
             (!yearTo || parseInt(year) <= parseInt(yearTo)) &&
