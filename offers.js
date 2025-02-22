@@ -23,28 +23,18 @@ async function fetchOffers(offset = 0, limit = 100) {
 }
 
 async function loadAllOffers() {
-    const limit = 100;
-    let offset = 0;
-    let totalCount = 0;
-
-    // Pobieramy wszystkie oferty
-    do {
-        const data = await fetchOffers(offset, limit);
-        allOffers = allOffers.concat(data.offers);
-        totalCount = data.totalCount || 0;
-        offset += limit;
-    } while (offset < totalCount && allOffers.length < totalCount);
-
+    const data = await fetchOffers(0, 100); // Pobieramy tylko 100 ofert
+    allOffers = data.offers;
     if (allOffers.length === 0) {
         console.error("Brak ofert do wyświetlenia!");
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia. Sprawdź token lub połączenie.</p>";
     } else {
-        // Sortujemy po dacie publikacji i bierzemy 8 najnowszych
+        // Sortujemy i bierzemy 8 najnowszych
         const latestOffers = allOffers
             .sort((a, b) => new Date(b.publication.startedAt) - new Date(a.publication.startedAt))
             .slice(0, 8);
-        displayOffers(latestOffers); // Wyświetlamy tylko 8
-        populateFilters(allOffers); // Filtry na wszystkich ofertach
+        displayOffers(latestOffers); // Wyświetlamy 8
+        populateFilters(allOffers); // Filtry na 100 ofertach
     }
 }
 
