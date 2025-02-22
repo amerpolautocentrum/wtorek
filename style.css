@@ -76,20 +76,27 @@ html, body {
     display: block;
 }
 
-/* Przycisk "Oferty" na grafika1 */
-.offers-button {
+/* Kontener na przyciski */
+.button-container {
     position: absolute;
     bottom: 5cm; /* 5 cm od dołu */
-    right: 5cm; /* Przesunięty o 2 cm w lewo (3cm + 2cm) */
+    right: 5cm; /* 5 cm od prawej */
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Odstęp między przyciskami */
+}
+
+/* Przycisk "Oferty" na grafika1 */
+.offers-button {
     background-color: #ff4c4c;
-    padding: 24px 48px;
-    font-size: 44px;
+    padding: 22.8px 45.6px; /* Zmniejszone o 5% z 24px 48px */
+    font-size: 41.8px; /* Zmniejszone o 5% z 44px */
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    border-radius: 16px;
+    border-radius: 15.2px; /* Zmniejszone o 5% z 16px */
     text-align: center;
     transition: 0.3s;
-    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 3.8px 3.8px 19px rgba(0, 0, 0, 0.3); /* Zmniejszone o 5% */
 }
 
 .offers-button a {
@@ -101,20 +108,17 @@ html, body {
     background-color: #e64444;
 }
 
-/* Przycisk "Blog" na grafika3 */
+/* Przycisk "Blog" pod "Oferty" */
 .blog-button {
-    position: absolute;
-    bottom: 5cm; /* Taka sama pozycja jak oferty, ale można zmienić */
-    right: 5cm; /* Taka sama pozycja jak oferty, ale można zmienić */
     background-color: #ff4c4c;
-    padding: 24px 48px;
-    font-size: 44px;
+    padding: 22.8px 45.6px; /* Takie same rozmiary jak offers-button */
+    font-size: 41.8px;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    border-radius: 16px;
+    border-radius: 15.2px;
     text-align: center;
     transition: 0.3s;
-    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 3.8px 3.8px 19px rgba(0, 0, 0, 0.3);
 }
 
 .blog-button a {
@@ -138,4 +142,142 @@ html, body {
 
 .social-icon {
     width: 80px !important;
-    height:
+    height: auto !important;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Styl dla strony ofert (offers.html) */
+.offers-page {
+    padding-top: 80px;
+    background-color: #000;
+    color: #fff;
+    min-height: 100vh;
+    font-family: 'Barlow Condensed', sans-serif;
+}
+
+.offers-page h1 {
+    text-align: center;
+    font-size: 36px;
+    padding: 20px 0;
+    color: #fff;
+}
+
+#filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+#filters select, #filters button {
+    padding: 10px;
+    font-size: 18px;
+    font-family: 'Barlow Condensed', sans-serif;
+    border: none;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #000;
+}
+
+#filters button {
+    background-color: #ff4c4c;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#filters button:hover {
+    background-color: #e64444;
+}
+
+#offers-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#offers-container div {
+    background-color: #1a1a1a;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+#offers-container h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+#offers-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+
+#offers-container p {
+    font-size: 18px;
+    color: #fff;
+}
+
+/* Responsywność */
+@media screen and (max-width: 768px) {
+    .main-nav {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .main-nav a {
+        font-size: 20px;
+        padding: 8px 16px;
+    }
+
+    .gallery-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .button-container {
+        bottom: 2cm;
+        right: 1cm;
+    }
+
+    .offers-button, .blog-button {
+        font-size: 30px; /* Zmniejszone dla mobilnych */
+        padding: 15px 30px;
+    }
+
+    .social-logos {
+        bottom: 10%;
+    }
+
+    .social-icon {
+        width: 60px !important;
+    }
+
+    .offers-page h1 {
+        font-size: 28px;
+    }
+
+    #filters {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #offers-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
