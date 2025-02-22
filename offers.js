@@ -23,19 +23,35 @@ async function fetchOffers(offset = 0, limit = 100) {
 }
 
 async function loadAllOffers() {
-    const data = await fetchOffers(0, 100); // Pobieramy tylko 100 ofert
-    allOffers = data.offers;
+    // Pierwsze żądanie – pobieramy 100 ofert i wyświetlamy 8 najnowszych od razu
+    const firstBatch = await fetchOffers(0, 100);
+    allOffers = firstBatch.offers;
     if (allOffers.length === 0) {
         console.error("Brak ofert do wyświetlenia!");
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia. Sprawdź token lub połączenie.</p>";
-    } else {
-        // Sortujemy i bierzemy 8 najnowszych
-        const latestOffers = allOffers
-            .sort((a, b) => new Date(b.publication.startedAt) - new Date(a.publication.startedAt))
-            .slice(0, 8);
-        displayOffers(latestOffers); // Wyświetlamy 8
-        populateFilters(allOffers); // Filtry na 100 ofertach
+        return;
     }
+
+    // Wyświetlamy 8 najnowszych z pierwszej partii
+    const latestOffers = allOffers.slice(0, 8);
+    displayOffers(latestOffers);
+
+    // Wypełniamy filtry wstępnie
+    populateFilters(allOffers);
+
+    // Pobieramy resztę ofert w tle
+    const limit = 100;
+    let offset = limit;
+    const totalCount = firstBatch.totalCount || 0;
+
+    while (offset < totalCount && allOffers.length < totalCount) {
+        const data = await fetchOffers(offset, limit);
+        allOffers = allOffers.concat(data.offers);
+        offset += limit;
+    }
+
+    // Po pobraniu wszystkich aktualizujemy filtry
+    populateFilters(allOffers);
 }
 
 function displayOffers(offers) {
@@ -59,6 +75,7 @@ function displayOffers(offers) {
 function populateFilters(offers) {
     const brands = [...new Set(offers.map(offer => offer.name.split(" ")[0]))].sort();
     const brandSelect = document.getElementById("brand");
+    brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
     brands.forEach(brand => {
         const option = document.createElement("option");
         option.value = brand;
@@ -71,6 +88,8 @@ function populateFilters(offers) {
     const years = [...new Set(offers.map(offer => offer.name.match(/\d{4}/)?.[0]))].sort();
     const yearFromSelect = document.getElementById("yearFrom");
     const yearToSelect = document.getElementById("yearTo");
+    yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
+    yearToSelect.innerHTML = '<option value="">Rocznik do</option>';
     years.forEach(year => {
         const fromOption = document.createElement("option");
         fromOption.value = year;
@@ -86,6 +105,8 @@ function populateFilters(offers) {
     const prices = [...new Set(offers.map(offer => parseFloat(offer.sellingMode.price.amount)))].sort((a, b) => a - b);
     const priceMinSelect = document.getElementById("priceMin");
     const priceMaxSelect = document.getElementById("priceMax");
+    priceMinSelect.innerHTML = '<option value="">Cena min</option>';
+    priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
     prices.forEach(price => {
         const minOption = document.createElement("option");
         minOption.value = price;
