@@ -38,18 +38,23 @@ function displayOffers(offers) {
     container.innerHTML = "";
     offers.forEach(offer => {
         const div = document.createElement("div");
+        div.className = "offer-item"; // Dodajemy klasę dla stylizacji
         div.innerHTML = `
             <h2>${offer.name}</h2>
             <img src="${offer.primaryImage.url}" alt="${offer.name}" width="200">
             <p>Cena: ${offer.sellingMode.price.amount} ${offer.sellingMode.price.currency}</p>
         `;
+        // Dodajemy klikalność z przekierowaniem na Allegro
+        div.addEventListener("click", () => {
+            window.open(`https://allegro.pl/oferta/${offer.id}`, "_blank");
+        });
         container.appendChild(div);
     });
 }
 
 function populateFilters(offers) {
-    // Marki
-    const brands = [...new Set(offers.map(offer => offer.name.split(" ")[0]))];
+    // Marki (sortowane alfabetycznie)
+    const brands = [...new Set(offers.map(offer => offer.name.split(" ")[0]))].sort();
     const brandSelect = document.getElementById("brand");
     brands.forEach(brand => {
         const option = document.createElement("option");
@@ -61,7 +66,7 @@ function populateFilters(offers) {
     // Początkowe modele (puste, aktualizowane w updateModels)
     updateModels();
 
-    // Roczniki
+    // Roczniki (sortowane rosnąco)
     const years = [...new Set(offers.map(offer => offer.name.match(/\d{4}/)?.[0]))].sort();
     const yearFromSelect = document.getElementById("yearFrom");
     const yearToSelect = document.getElementById("yearTo");
@@ -77,7 +82,7 @@ function populateFilters(offers) {
         yearToSelect.appendChild(toOption);
     });
 
-    // Ceny
+    // Ceny (sortowane rosnąco)
     const prices = [...new Set(offers.map(offer => parseFloat(offer.sellingMode.price.amount)))].sort((a, b) => a - b);
     const priceMinSelect = document.getElementById("priceMin");
     const priceMaxSelect = document.getElementById("priceMax");
@@ -101,11 +106,11 @@ function updateModels() {
 
     if (brand) {
         const filteredOffers = allOffers.filter(offer => offer.name.startsWith(brand));
-        // Wyciągamy modele bez roczników (np. "SQ5" zamiast "SQ5 2024")
+        // Wyciągamy modele bez roczników i sortujemy alfabetycznie
         const models = [...new Set(filteredOffers.map(offer => {
             const parts = offer.name.split(" ");
             return parts[1]; // Bierzemy tylko drugi człon (np. "SQ5" z "Audi SQ5 2024")
-        }))];
+        }))].sort();
         models.forEach(model => {
             const option = document.createElement("option");
             option.value = model;

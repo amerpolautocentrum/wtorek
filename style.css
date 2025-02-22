@@ -79,24 +79,24 @@ html, body {
 /* Kontener na przyciski */
 .button-container {
     position: absolute;
-    bottom: 5cm; /* 5 cm od dołu */
-    right: 5cm; /* 5 cm od prawej */
+    bottom: 5cm;
+    right: 5cm;
     display: flex;
     flex-direction: column;
-    gap: 10px; /* Odstęp między przyciskami */
+    gap: 10px;
 }
 
 /* Przycisk "Oferty" na grafika1 */
 .offers-button {
     background-color: #ff4c4c;
-    padding: 22.8px 45.6px; /* Zmniejszone o 5% z 24px 48px */
-    font-size: 41.8px; /* Zmniejszone o 5% z 44px */
+    padding: 22.8px 45.6px;
+    font-size: 41.8px;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
-    border-radius: 15.2px; /* Zmniejszone o 5% z 16px */
+    border-radius: 15.2px;
     text-align: center;
     transition: 0.3s;
-    box-shadow: 3.8px 3.8px 19px rgba(0, 0, 0, 0.3); /* Zmniejszone o 5% */
+    box-shadow: 3.8px 3.8px 19px rgba(0, 0, 0, 0.3);
 }
 
 .offers-button a {
@@ -111,7 +111,7 @@ html, body {
 /* Przycisk "Blog" pod "Oferty" */
 .blog-button {
     background-color: #ff4c4c;
-    padding: 22.8px 45.6px; /* Takie same rozmiary jak offers-button */
+    padding: 22.8px 45.6px;
     font-size: 41.8px;
     font-family: 'Barlow Condensed', sans-serif;
     font-weight: 700;
@@ -206,26 +206,32 @@ html, body {
     margin: 0 auto;
 }
 
-#offers-container div {
+.offer-item {
     background-color: #1a1a1a;
     padding: 15px;
     border-radius: 8px;
     text-align: center;
+    cursor: pointer; /* Wskazuje, że oferta jest klikalna */
+    transition: background-color 0.3s ease;
 }
 
-#offers-container h2 {
+.offer-item:hover {
+    background-color: #2a2a2a; /* Lekkie rozjaśnienie przy najechaniu */
+}
+
+.offer-item h2 {
     font-size: 20px;
     margin-bottom: 10px;
     color: #fff;
 }
 
-#offers-container img {
+.offer-item img {
     max-width: 100%;
     height: auto;
     border-radius: 5px;
 }
 
-#offers-container p {
+.offer-item p {
     font-size: 18px;
     color: #fff;
 }
@@ -255,7 +261,7 @@ html, body {
     }
 
     .offers-button, .blog-button {
-        font-size: 30px; /* Zmniejszone dla mobilnych */
+        font-size: 30px;
         padding: 15px 30px;
     }
 
