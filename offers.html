@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferty - Amer-Pol Auto Centrum</title>
+    <link rel="stylesheet" href="style.css?v=5">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="main-nav">
+        <a href="index.html">Strona główna</a>
+        <a href="offers.html">Oferty</a>
+        <a href="blog.html">Blog</a>
+    </nav>
+
+    <div class="offers-page">
+        <h1>Nasze oferty</h1>
+        <div id="filters">
+            <input type="text" id="search" placeholder="Szukaj...">
+            <select id="brand">
+                <option value="">Marka</option>
+            </select>
+            <input type="number" id="minPrice" placeholder="Min. cena">
+            <input type="number" id="maxPrice" placeholder="Max. cena">
+            <button onclick="filterOffers()">Filtruj</button>
+        </div>
+        <div id="offers-container"></div>
+    </div>
+    <script src="offers.js"></script>
+</body>
+</html>
