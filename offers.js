@@ -1,4 +1,4 @@
-const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDAyNjQ5MjcsImp0aSI6IjdjYjExYmE3LTQ0YWMtNGQxYS04OTY5LWU5NDgzOTE2YjUzNCIsImNsaWVudF9iZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.7MLLlGrm4Tg7F_OPPnupAaIDdsA8Y9CfakK6W62qa-M6IjO-xBBPDI9YCAYdmsoMBzyhirr13uQ51LD9ybs3dls6UDiIz9T_CZ6PpFk_xPyLMjzWB3f7xIXCiLgW9qRNuaqsadJuytWB61y-8Q2HTT4CHrPU-SFsum74bRuRhy0goxuHmx6E-9FtQC2YAoJDgf_o0ouRJlQtol1Gv12hf8MuRAmrPwt0M4x0XIExaspltmq4j6_9tH4jYjZlVqsMaL-UYvixIGiXxQVI1jsyjP5wG-EhWmPGBBxHdBkidaWJH98YFAsYG_aOzp1z2mOY2k9cI9n72BT2xzp2Xsq1sA";
+const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDAyOTYwMjksImp0aSI6ImI5MzRiYmVjLTMzMjYtNGRhMS1iMzlmLTkxNTY3YjJiYjZkMSIsImNsaWVudF9pZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.8-aJ5KE2XDw8iiUakFeXEA9-Xo0OZDi4YjcrdENiGJ6KUwdTdL2gUW5EE_fwuNsspfKMkejkcTO-4ZkgasgitcpCS8PmwpUR7TP7fTS3HD3-EsdpkpxD6XBbdeEHfzLvvFHqgO6VEnxC_GUV3ELgWomfZlLIbu4f92zlUGEmXpGLPuYzBXqXvpijgBg4pVZA3h5s1_Y-xbPRv2wPAv5vUS0J6Ln5AMRTVQBrP3sLn7seCgPw5Ds5-y73YRMRwdAytFkZWorQ6MFcRT_vhrpQBUrKSoddSXbZMP4b8n8tFFj7dXaTmd-LVmDqrbXS1UmBHu5gZcXAsgjJO842MIYFZA";
 let allOffers = [];
 
 async function fetchOffers(offset = 0, limit = 100, retries = 3) {
@@ -29,7 +29,6 @@ async function fetchOffers(offset = 0, limit = 100, retries = 3) {
 }
 
 async function loadAllOffers() {
-    // Pierwsze żądanie – 8 ofert na start
     const firstBatch = await fetchOffers(0, 8);
     allOffers = firstBatch.offers;
     if (allOffers.length === 0) {
@@ -38,11 +37,9 @@ async function loadAllOffers() {
         return;
     }
 
-    // Wyświetlamy 8 ofert od razu
     displayOffers(allOffers);
     populateFilters(allOffers);
 
-    // Pobieramy resztę ofert w tle
     const limit = 100;
     let offset = limit;
     const totalCount = firstBatch.totalCount || 0;
@@ -53,7 +50,6 @@ async function loadAllOffers() {
         offset += limit;
     }
 
-    // Aktualizujemy filtry po pobraniu wszystkich
     populateFilters(allOffers);
 }
 
@@ -143,13 +139,12 @@ function updateModels() {
         const models = [...new Set(filteredOffers.map(offer => {
             const parts = offer.name.split(" ");
             const brandWords = brand.split(" ").length;
-            // Wyodrębniamy model, pomijając rocznik
             let model = parts[brandWords];
             const nextPart = parts[brandWords + 1];
             if (nextPart && !/^\d{4}$/.test(nextPart)) {
-                model += " " + nextPart; // Dodajemy kolejne słowo, jeśli nie jest rocznikiem
+                model += " " + nextPart;
             }
-            return model; // Zwracamy pełny model, np. "Seria 3", "XC90"
+            return model;
         }))].sort();
         models.forEach(model => {
             const option = document.createElement("option");
