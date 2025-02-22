@@ -58,15 +58,8 @@ function populateFilters(offers) {
         brandSelect.appendChild(option);
     });
 
-    // Modele (wszystkie dostępne)
-    const models = [...new Set(offers.map(offer => offer.name.split(" ").slice(1, 3).join(" ")))];
-    const modelSelect = document.getElementById("model");
-    models.forEach(model => {
-        const option = document.createElement("option");
-        option.value = model;
-        option.textContent = model;
-        modelSelect.appendChild(option);
-    });
+    // Początkowe modele (puste, aktualizowane w updateModels)
+    updateModels();
 
     // Roczniki
     const years = [...new Set(offers.map(offer => offer.name.match(/\d{4}/)?.[0]))].sort();
@@ -99,6 +92,27 @@ function populateFilters(offers) {
         maxOption.textContent = `${price} PLN`;
         priceMaxSelect.appendChild(maxOption);
     });
+}
+
+function updateModels() {
+    const brand = document.getElementById("brand").value;
+    const modelSelect = document.getElementById("model");
+    modelSelect.innerHTML = '<option value="">Wybierz model</option>'; // Resetowanie listy
+
+    if (brand) {
+        const filteredOffers = allOffers.filter(offer => offer.name.startsWith(brand));
+        // Wyciągamy modele bez roczników (np. "SQ5" zamiast "SQ5 2024")
+        const models = [...new Set(filteredOffers.map(offer => {
+            const parts = offer.name.split(" ");
+            return parts[1]; // Bierzemy tylko drugi człon (np. "SQ5" z "Audi SQ5 2024")
+        }))];
+        models.forEach(model => {
+            const option = document.createElement("option");
+            option.value = model;
+            option.textContent = model;
+            modelSelect.appendChild(option);
+        });
+    }
 }
 
 function filterOffers() {

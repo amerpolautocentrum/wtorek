@@ -4,20 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Oferty - Amer-Pol Auto Centrum</title>
-    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="style.css?v=9">
     <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="main-nav">
-        <a href="index.html">Strona główna</a>
-        <a href="offers.html">Oferty</a>
-        <a href="blog.html">Blog</a>
+        <a href="index.html">STRONA GŁÓWNA</a>
     </nav>
 
     <div class="offers-page">
         <h1>Nasze oferty</h1>
         <div id="filters">
-            <select id="brand">
+            <select id="brand" onchange="updateModels()">
                 <option value="">Wybierz markę</option>
             </select>
             <select id="model">
@@ -35,7 +33,7 @@
             <select id="priceMax">
                 <option value="">Cena max</option>
             </select>
-            <button onclick="filterOffers()">Filtruj</button>
+            <button onclick="filterOffers()">FILTRUJ</button>
         </div>
         <div id="offers-container"></div>
     </div>
