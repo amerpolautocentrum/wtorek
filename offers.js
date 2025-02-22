@@ -1,9 +1,9 @@
 const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDAyNjQ5MjcsImp0aSI6IjdjYjExYmE3LTQ0YWMtNGQxYS04OTY5LWU5NDgzOTE2YjUzNCIsImNsaWVudF9pZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.7MLLlGrm4Tg7F_OPPnupAaIDdsA8Y9CfakK6W62qa-M6IjO-xBBPDI9YCAYdmsoMBzyhirr13uQ51LD9ybs3dls6UDiIz9T_CZ6PpFk_xPyLMjzWB3f7xIXCiLgW9qRNuaqsadJuytWB61y-8Q2HTT4CHrPU-SFsum74bRuRhy0goxuHmx6E-9FtQC2YAoJDgf_o0ouRJlQtol1Gv12hf8MuRAmrPwt0M4x0XIExaspltmq4j6_9tH4jYjZlVqsMaL-UYvixIGiXxQVI1jsyjP5wG-EhWmPGBBxHdBkidaWJH98YFAsYG_aOzp1z2mOY2k9cI9n72BT2xzp2Xsq1sA";
 let allOffers = [];
 
-async function fetchOffers(offset = 0, limit = 100) {
+async function fetchOffers(offset = 0, limit = 8) {
     try {
-        const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}`, {
+        const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}&sort=-publication.start`, {
             headers: {
                 "Authorization": `Bearer ${accessToken}`,
                 "Accept": "application/vnd.allegro.public.v1+json"
@@ -23,17 +23,8 @@ async function fetchOffers(offset = 0, limit = 100) {
 }
 
 async function loadAllOffers() {
-    const limit = 100;
-    let offset = 0;
-    let totalCount = 0;
-
-    do {
-        const data = await fetchOffers(offset, limit);
-        allOffers = allOffers.concat(data.offers);
-        totalCount = data.totalCount || 0;
-        offset += limit;
-    } while (offset < totalCount && allOffers.length < totalCount);
-
+    const data = await fetchOffers(0, 8); // Pobieramy tylko 8 najnowszych ofert
+    allOffers = data.offers;
     if (allOffers.length === 0) {
         console.error("Brak ofert do wyświetlenia!");
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia. Sprawdź token lub połączenie.</p>";
