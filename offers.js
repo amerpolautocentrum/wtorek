@@ -1,4 +1,4 @@
-const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDAyNDgyMDQsImp0aSI6ImY0MzMwYmZmLTFmMDEtNDQ0Yy1hODc5LTJjNGU4NDUxZGRjZiIsImNsaWVudF9pZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.HRwHaSQgV8h7FxRIkD6sLfokU8WIA3t27fixuJXKTLaXjsazZqdC9TwpvHgKzcN6YuXNpNZvK1OW-5i0P_Y3GS7IFuPxqfatrmDdEoIy88L93xP70XpJ3oesNyTLdaP4IWuPzhSQ4Q7LUGY4QLPqg8vyWiXkGnqwRqIbKG3Zdyhn1eUwusJZhWf7_yNEik1nNNFUq0vrbPZdeJJpsyslHMHl0UADXn5CB1Uf-GtAamnQH6ZZWNu9R2uMOKMMyPHUYx_1NVmM8jvkrZniVyeX5fYk4AyHJXDXdqdDIHg-WUtZtfSxRJCJBh5uSo5yCcdmLMPQzn-fGw1OPKnQSWuIVg";
+const accessToken = "TWÓJ_NOWY_ACCESS_TOKEN"; // Wstaw nowy token z Postmana
 let allOffers = [];
 
 async function fetchOffers(offset = 0, limit = 100) {
@@ -9,7 +9,13 @@ async function fetchOffers(offset = 0, limit = 100) {
                 "Accept": "application/vnd.allegro.public.v1+json"
             }
         });
-        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        // Logujemy surową odpowiedź, aby zobaczyć, co zwraca serwer
+        const text = await response.text();
+        console.log("Surowa odpowiedź serwera:", text);
+        const data = JSON.parse(text); // Tutaj może wystąpić błąd, jeśli text nie jest JSON-em
         return data;
     } catch (error) {
         console.error("Błąd podczas pobierania ofert:", error);
@@ -29,8 +35,13 @@ async function loadAllOffers() {
         offset += limit;
     } while (offset < totalCount && allOffers.length < totalCount);
 
-    displayOffers(allOffers);
-    populateFilters(allOffers);
+    if (allOffers.length === 0) {
+        console.error("Brak ofert do wyświetlenia!");
+        document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia. Sprawdź token lub połączenie.</p>";
+    } else {
+        displayOffers(allOffers);
+        populateFilters(allOffers);
+    }
 }
 
 function displayOffers(offers) {
@@ -38,13 +49,12 @@ function displayOffers(offers) {
     container.innerHTML = "";
     offers.forEach(offer => {
         const div = document.createElement("div");
-        div.className = "offer-item"; // Dodajemy klasę dla stylizacji
+        div.className = "offer-item";
         div.innerHTML = `
             <h2>${offer.name}</h2>
             <img src="${offer.primaryImage.url}" alt="${offer.name}" width="200">
             <p>Cena: ${offer.sellingMode.price.amount} ${offer.sellingMode.price.currency}</p>
         `;
-        // Dodajemy klikalność z przekierowaniem na Allegro
         div.addEventListener("click", () => {
             window.open(`https://allegro.pl/oferta/${offer.id}`, "_blank");
         });
@@ -53,7 +63,6 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-    // Marki (sortowane alfabetycznie)
     const brands = [...new Set(offers.map(offer => offer.name.split(" ")[0]))].sort();
     const brandSelect = document.getElementById("brand");
     brands.forEach(brand => {
@@ -63,10 +72,8 @@ function populateFilters(offers) {
         brandSelect.appendChild(option);
     });
 
-    // Początkowe modele (puste, aktualizowane w updateModels)
     updateModels();
 
-    // Roczniki (sortowane rosnąco)
     const years = [...new Set(offers.map(offer => offer.name.match(/\d{4}/)?.[0]))].sort();
     const yearFromSelect = document.getElementById("yearFrom");
     const yearToSelect = document.getElementById("yearTo");
@@ -82,7 +89,6 @@ function populateFilters(offers) {
         yearToSelect.appendChild(toOption);
     });
 
-    // Ceny (sortowane rosnąco)
     const prices = [...new Set(offers.map(offer => parseFloat(offer.sellingMode.price.amount)))].sort((a, b) => a - b);
     const priceMinSelect = document.getElementById("priceMin");
     const priceMaxSelect = document.getElementById("priceMax");
@@ -102,14 +108,13 @@ function populateFilters(offers) {
 function updateModels() {
     const brand = document.getElementById("brand").value;
     const modelSelect = document.getElementById("model");
-    modelSelect.innerHTML = '<option value="">Wybierz model</option>'; // Resetowanie listy
+    modelSelect.innerHTML = '<option value="">Wybierz model</option>';
 
     if (brand) {
         const filteredOffers = allOffers.filter(offer => offer.name.startsWith(brand));
-        // Wyciągamy modele bez roczników i sortujemy alfabetycznie
         const models = [...new Set(filteredOffers.map(offer => {
             const parts = offer.name.split(" ");
-            return parts[1]; // Bierzemy tylko drugi człon (np. "SQ5" z "Audi SQ5 2024")
+            return parts[1];
         }))].sort();
         models.forEach(model => {
             const option = document.createElement("option");
