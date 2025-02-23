@@ -4,10 +4,11 @@ let allOffers = [];
 async function fetchOffers(offset = 0, limit = 200, retries = 3) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const response = await fetch(`https://thingproxy.freeboard.io/fetch/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}&sort=-publication.start`, {
+            const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}&sort=-publication.start`, {
                 headers: {
                     "Authorization": `Bearer ${accessToken}`,
-                    "Accept": "application/vnd.allegro.public.v1+json"
+                    "Accept": "application/vnd.allegro.public.v1+json",
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
                 }
             });
             if (!response.ok) {
