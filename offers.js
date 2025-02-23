@@ -8,7 +8,9 @@ async function fetchOffers(offset = 0, limit = 200, retries = 3) {
                 headers: {
                     "Authorization": `Bearer ${accessToken}`,
                     "Accept": "application/vnd.allegro.public.v1+json",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
+                    "Origin": "https://amerpolautocentrum.github.io",
+                    "Referer": "https://amerpolautocentrum.github.io/wtorek/offers.html"
                 }
             });
             if (!response.ok) {
