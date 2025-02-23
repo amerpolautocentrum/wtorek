@@ -1,9 +1,10 @@
-const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDAzNDkwNTMsImp0aSI6IjI5MzM0MWNiLWE0NGItNDQ2NS1hYjFkLWE5ODliMzMwNGI5NSIsImNsaWVudF9pZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.iBMLZGQzNJkY4FGo9THHeDeATP9eVVRHojlYLNrhnXGaRewJVJWeg095KgpnCr1fIVhrHDTKmNL74uyy-NKNrvz134LnPzlodBOrHVQNsTlsO--wO6YjyC6hdbj3nCyG34esG6N6yo2ZgWp2NpdfHP11GdDgg1LnPdb-7MRHvw4eiS-EbYBgNl3Q3ckTw6jA4iHgAMEALrwmILNaswJY-Q2fGmCbn90HE4id1QuBs2YPM_QgococJCj-KPhgErw2x2mUzW7k0HZEssbp-KWYu7N8EmdC3jpPklYWts3cjoVD8xs0guewBqw4T2HQTjyTaBzyh_aOdsXbRTiTrd9UYw"
+const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDAzNDkwNTMsImp0aSI6IjI5MzM0MWNiLWE0NGItNDQ2NS1hYjFkLWE5ODliMzMwNGI5NSIsImNsaWVudF9pZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.iBMLZGQzNJkY4FGo9THHeDeATP9eVVRHojlYLNrhnXGaRewJVJWeg095KgpnCr1fIVhrHDTKmNL74uyy-NKNrvz134LnPzlodBOrHVQNsTlsO--wO6YjyC6hdbj3nCyG34esG6N6yo2ZgWp2NpdfHP11GdDgg1LnPdb-7MRHvw4eiS-EbYBgNl3Q3ckTw6jA4iHgAMEALrwmILNaswJY-Q2fGmCbn90HE4id1QuBs2YPM_QgococJCj-KPhgErw2x2mUzW7k0HZEssbp-KWYu7N8EmdC3jpPklYWts3cjoVD8xs0guewBqw4T2HQTjyTaBzyh_aOdsXbRTiTrd9UYw";
 let allOffers = [];
+
 async function fetchOffers(offset = 0, limit = 200, retries = 3) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
-            const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}&sort=-publication.start`, {
+            const response = await fetch(`https://thingproxy.freeboard.io/fetch/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}&sort=-publication.start`, {
                 headers: {
                     "Authorization": `Bearer ${accessToken}`,
                     "Accept": "application/vnd.allegro.public.v1+json"
@@ -22,13 +23,12 @@ async function fetchOffers(offset = 0, limit = 200, retries = 3) {
                 console.error("Wyczerpano próby pobierania ofert!");
                 return { offers: [] };
             }
-            await new Promise(resolve => setTimeout(resolve, 2000)); // 2 sekundy odstępu
+            await new Promise(resolve => setTimeout(resolve, 2000));
         }
     }
 }
 
 async function loadAllOffers() {
-    // Pierwsze żądanie – 8 ofert na start
     const firstBatch = await fetchOffers(0, 8);
     allOffers = firstBatch.offers;
     if (allOffers.length === 0) {
@@ -37,11 +37,9 @@ async function loadAllOffers() {
         return;
     }
 
-    // Wyświetlamy 8 ofert od razu
     displayOffers(allOffers);
     populateFilters(allOffers);
 
-    // Pobieramy resztę w tle (wszystkie oferty, limit 200)
     const limit = 200;
     let offset = limit;
     const totalCount = firstBatch.totalCount || 0;
@@ -50,10 +48,9 @@ async function loadAllOffers() {
         const data = await fetchOffers(offset, limit);
         allOffers = allOffers.concat(data.offers);
         offset += limit;
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 sekunda odstępu między żądaniami
+        await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Aktualizujemy filtry po pobraniu wszystkich
     populateFilters(allOffers);
 }
 
