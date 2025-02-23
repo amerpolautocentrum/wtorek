@@ -32,7 +32,8 @@ async function fetchOffers(offset = 0, limit = 200, retries = 3) {
 }
 
 async function loadAllOffers() {
-    const firstBatch = await fetchOffers(0, 8);
+    // Pierwsze żądanie – 50 ofert na start dla różnorodnych filtrów
+    const firstBatch = await fetchOffers(0, 50);
     allOffers = firstBatch.offers;
     if (allOffers.length === 0) {
         console.error("Brak ofert do wyświetlenia!");
@@ -40,10 +41,12 @@ async function loadAllOffers() {
         return;
     }
 
-    displayOffers(allOffers);
+    // Wyświetlamy 8 ofert, ale filtry od razu mają 50
+    displayOffers(allOffers.slice(0, 8));
     populateFilters(allOffers);
 
-    const limit = 200;
+    // Pobieramy resztę w tle (limit 100)
+    const limit = 100;
     let offset = limit;
     const totalCount = firstBatch.totalCount || 0;
 
@@ -51,9 +54,10 @@ async function loadAllOffers() {
         const data = await fetchOffers(offset, limit);
         allOffers = allOffers.concat(data.offers);
         offset += limit;
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1500)); // 1,5 sekundy odstępu
     }
 
+    // Aktualizujemy filtry po pełnym załadowaniu
     populateFilters(allOffers);
 }
 
