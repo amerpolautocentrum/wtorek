@@ -1,190 +1,109 @@
-const accessToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiIxMDg5MTM2NDIiLCJzY29wZSI6WyJhbGxlZ3JvOmFwaTpzYWxlOm9mZmVyczpyZWFkIl0sImFsbGVncm9fYXBpIjp0cnVlLCJpc3MiOiJodHRwczovL2FsbGVncm8ucGwiLCJleHAiOjE3NDA0NTkwOTEsImp0aSI6ImJjZjYxZDQzLTUzYmQtNDUxNC04ODU2LTBlMjY4NjE3ZDczZCIsImNsaWVudF9pZCI6IjRhNjhkMDk0ZDljMjQ3NTRhNzBlNWY4MWVlNWIxMjQxIn0.dHRdhtlExyNxW3Llj4oWm5H3fUXZNgCMXbvMAPwJG9rV6dQScCqnwwdZYJ8WuSM3BdnEpFicwaX7hfpy7A4XejU7s8udKVgTJUHLsjyXtwNOioSQJIu2889ITFcePTpKUnHXUNNBOj9C3ITpC0Y9y9_XiAgi5hI_tYP1kiSKJMB4LvJVatGDDllobcn2hV14xAf1-t4Z_ocBytrj78YzMUBZFJvmpOqLRJ_6JVK2xg4XmQH9QsVMmwARWjMkkf7cO01_LzeZJT2-DoOf3wRej4hXxNJuH63gk9nH-K2Cv09LIKipLiVmPJ0Mlbo-oZSGGDjHIU-RkObCqdGbsSLAow"
-let allOffers = [];
-async function fetchOffers(offset = 0, limit = 200, retries = 3) {
-    for (let attempt = 1; attempt <= retries; attempt++) {
+document.addEventListener("DOMContentLoaded", function () {
+    const offersContainer = document.getElementById("offers-container");
+    const brandFilter = document.getElementById("brand-filter");
+    const yearFromFilter = document.getElementById("yearFrom");
+    const yearToFilter = document.getElementById("yearTo");
+    const priceMinFilter = document.getElementById("priceMin");
+    const priceMaxFilter = document.getElementById("priceMax");
+    const rssUrl = "https://allegro.pl/rss.php?feed=search&string=&user=amerpolautocentrum";
+    let allOffers = [];
+
+    async function fetchOffers() {
         try {
-            const response = await fetch(`https://cors-anywhere.herokuapp.com/https://api.allegro.pl/sale/offers?offset=${offset}&limit=${limit}&sort=-publication.start`, {
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`,
-                    "Accept": "application/vnd.allegro.public.v1+json",
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-                    "Origin": "https://amerpolautocentrum.github.io",
-                    "Referer": "https://amerpolautocentrum.github.io/wtorek/offers.html"
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }
-            const text = await response.text();
-            console.log(`Próba ${attempt} - Surowa odpowiedź serwera (offset=${offset}):`, text);
-            const data = JSON.parse(text);
-            return data;
+            const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`);
+            if (!response.ok) throw new Error("Nie udało się pobrać ofert");
+            const data = await response.json();
+            parseRSS(data.contents);
         } catch (error) {
-            console.error(`Próba ${attempt} nieudana - Błąd podczas pobierania ofert:`, error);
-            if (attempt === retries) {
-                console.error("Wyczerpano próby pobierania ofert!");
-                return { offers: [] };
-            }
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            console.error("Błąd pobierania ofert:", error);
         }
     }
-}
 
-async function loadAllOffers() {
-    // Pierwsze żądanie – 50 ofert na start dla różnorodnych filtrów
-    const firstBatch = await fetchOffers(0, 50);
-    allOffers = firstBatch.offers;
-    if (allOffers.length === 0) {
-        console.error("Brak ofert do wyświetlenia!");
-        document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia. Sprawdź token lub połączenie.</p>";
-        return;
+    function parseRSS(xmlString) {
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(xmlString, "text/xml");
+        const items = xml.querySelectorAll("item");
+        
+        allOffers = Array.from(items).map(item => ({
+            title: item.querySelector("title").textContent,
+            link: item.querySelector("link").textContent,
+            image: item.querySelector("enclosure")?.getAttribute("url") || "https://via.placeholder.com/200",
+            price: parseFloat(item.querySelector("description").textContent.match(/\d+[,.]?\d*/)?.[0]) || 0,
+            year: item.querySelector("title").textContent.match(/\d{4}/)?.[0] || ""
+        }));
+
+        displayOffers(allOffers.slice(0, 8));
+        populateFilters();
     }
 
-    // Wyświetlamy 8 ofert, ale filtry od razu mają 50
-    displayOffers(allOffers.slice(0, 8));
-    populateFilters(allOffers);
-
-    // Pobieramy resztę w tle (limit 100)
-    const limit = 100;
-    let offset = limit;
-    const totalCount = firstBatch.totalCount || 0;
-
-    while (offset < totalCount && allOffers.length < totalCount) {
-        const data = await fetchOffers(offset, limit);
-        allOffers = allOffers.concat(data.offers);
-        offset += limit;
-        await new Promise(resolve => setTimeout(resolve, 1500)); // 1,5 sekundy odstępu
-    }
-
-    // Aktualizujemy filtry po pełnym załadowaniu
-    populateFilters(allOffers);
-}
-
-function displayOffers(offers) {
-    const container = document.getElementById("offers-container");
-    container.innerHTML = "";
-    offers.forEach(offer => {
-        const div = document.createElement("div");
-        div.className = "offer-item";
-        div.innerHTML = `
-            <h2>${offer.name}</h2>
-            <img src="${offer.primaryImage.url}" alt="${offer.name}" width="200">
-            <p>Cena: ${offer.sellingMode.price.amount} ${offer.sellingMode.price.currency}</p>
-        `;
-        div.addEventListener("click", () => {
-            window.open(`https://allegro.pl/oferta/${offer.id}`, "_blank");
+    function displayOffers(offers) {
+        offersContainer.innerHTML = "";
+        offers.forEach(offer => {
+            const div = document.createElement("div");
+            div.className = "offer-item";
+            div.innerHTML = `
+                <h2>${offer.title}</h2>
+                <div class="offer-image">
+                    <img src="${offer.image}" alt="${offer.title}" width="200">
+                </div>
+                <p class="offer-price">Cena: ${offer.price.toFixed(2)} PLN</p>
+                <button class="offer-button" onclick="window.open('${offer.link}', '_blank')">Zobacz ofertę</button>
+            `;
+            offersContainer.appendChild(div);
         });
-        container.appendChild(div);
-    });
-}
+    }
 
-function populateFilters(offers) {
-    const knownBrands = ["Alfa Romeo", "Volkswagen", "Volvo", "Land Rover"];
-    const brands = [...new Set(offers.map(offer => {
-        const parts = offer.name.split(" ");
-        for (const brand of knownBrands) {
-            if (offer.name.startsWith(brand)) {
-                return brand;
-            }
-        }
-        return parts[0];
-    }))].sort();
-
-    const brandSelect = document.getElementById("brand");
-    brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
-    brands.forEach(brand => {
-        const option = document.createElement("option");
-        option.value = brand;
-        option.textContent = brand;
-        brandSelect.appendChild(option);
-    });
-
-    updateModels();
-
-    const years = [...new Set(offers.map(offer => offer.name.match(/\d{4}/)?.[0]))].sort();
-    const yearFromSelect = document.getElementById("yearFrom");
-    const yearToSelect = document.getElementById("yearTo");
-    yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
-    yearToSelect.innerHTML = '<option value="">Rocznik do</option>';
-    years.forEach(year => {
-        const fromOption = document.createElement("option");
-        fromOption.value = year;
-        fromOption.textContent = year;
-        yearFromSelect.appendChild(fromOption);
-
-        const toOption = document.createElement("option");
-        toOption.value = year;
-        toOption.textContent = year;
-        yearToSelect.appendChild(toOption);
-    });
-
-    const prices = [...new Set(offers.map(offer => parseFloat(offer.sellingMode.price.amount)))].sort((a, b) => a - b);
-    const priceMinSelect = document.getElementById("priceMin");
-    const priceMaxSelect = document.getElementById("priceMax");
-    priceMinSelect.innerHTML = '<option value="">Cena min</option>';
-    priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
-    prices.forEach(price => {
-        const minOption = document.createElement("option");
-        minOption.value = price;
-        minOption.textContent = `${price} PLN`;
-        priceMinSelect.appendChild(minOption);
-
-        const maxOption = document.createElement("option");
-        maxOption.value = price;
-        maxOption.textContent = `${price} PLN`;
-        priceMaxSelect.appendChild(maxOption);
-    });
-}
-
-function updateModels() {
-    const brand = document.getElementById("brand").value;
-    const modelSelect = document.getElementById("model");
-    modelSelect.innerHTML = '<option value="">Wybierz model</option>';
-
-    if (brand) {
-        const filteredOffers = allOffers.filter(offer => offer.name.startsWith(brand));
-        const models = [...new Set(filteredOffers.map(offer => {
-            const parts = offer.name.split(" ");
-            const brandWords = brand.split(" ").length;
-            let model = parts[brandWords];
-            const nextPart = parts[brandWords + 1];
-            if (nextPart && !/^\d{4}$/.test(nextPart)) {
-                model += " " + nextPart;
-            }
-            return model;
-        }))].sort();
-        models.forEach(model => {
+    function populateFilters() {
+        const brands = [...new Set(allOffers.map(offer => offer.title.split(" ")[0]))].sort();
+        brandFilter.innerHTML = '<option value="">Wybierz markę</option>';
+        brands.forEach(brand => {
             const option = document.createElement("option");
-            option.value = model;
-            option.textContent = model;
-            modelSelect.appendChild(option);
+            option.value = brand;
+            option.textContent = brand;
+            brandFilter.appendChild(option);
+        });
+
+        const years = [...new Set(allOffers.map(offer => offer.year).filter(y => y))].sort();
+        yearFromFilter.innerHTML = '<option value="">Rocznik od</option>';
+        yearToFilter.innerHTML = '<option value="">Rocznik do</option>';
+        years.forEach(year => {
+            yearFromFilter.innerHTML += `<option value="${year}">${year}</option>`;
+            yearToFilter.innerHTML += `<option value="${year}">${year}</option>`;
+        });
+
+        const prices = [...new Set(allOffers.map(offer => offer.price))].sort((a, b) => a - b);
+        priceMinFilter.innerHTML = '<option value="">Cena min</option>';
+        priceMaxFilter.innerHTML = '<option value="">Cena max</option>';
+        prices.forEach(price => {
+            priceMinFilter.innerHTML += `<option value="${price}">${price.toFixed(2)} PLN</option>`;
+            priceMaxFilter.innerHTML += `<option value="${price}">${price.toFixed(2)} PLN</option>`;
         });
     }
-}
 
-function filterOffers() {
-    const brand = document.getElementById("brand").value;
-    const model = document.getElementById("model").value;
-    const yearFrom = document.getElementById("yearFrom").value;
-    const yearTo = document.getElementById("yearTo").value;
-    const priceMin = parseFloat(document.getElementById("priceMin").value) || 0;
-    const priceMax = parseFloat(document.getElementById("priceMax").value) || Infinity;
+    function filterOffers() {
+        const brand = brandFilter.value;
+        const yearFrom = parseInt(yearFromFilter.value) || 0;
+        const yearTo = parseInt(yearToFilter.value) || Infinity;
+        const priceMin = parseFloat(priceMinFilter.value) || 0;
+        const priceMax = parseFloat(priceMaxFilter.value) || Infinity;
 
-    const filteredOffers = allOffers.filter(offer => {
-        const title = offer.name;
-        const price = parseFloat(offer.sellingMode.price.amount);
-        const year = title.match(/\d{4}/)?.[0] || "";
-        return (
-            (!brand || title.startsWith(brand)) &&
-            (!model || title.includes(model)) &&
-            (!yearFrom || parseInt(year) >= parseInt(yearFrom)) &&
-            (!yearTo || parseInt(year) <= parseInt(yearTo)) &&
-            price >= priceMin &&
-            price <= priceMax
-        );
-    });
+        const filteredOffers = allOffers.filter(offer => {
+            const year = parseInt(offer.year) || 0;
+            return (
+                (!brand || offer.title.startsWith(brand)) &&
+                (year >= yearFrom && year <= yearTo) &&
+                (offer.price >= priceMin && offer.price <= priceMax)
+            );
+        });
 
-    displayOffers(filteredOffers);
-}
+        displayOffers(filteredOffers);
+    }
 
-loadAllOffers();
+    brandFilter.addEventListener("change", filterOffers);
+    yearFromFilter.addEventListener("change", filterOffers);
+    yearToFilter.addEventListener("change", filterOffers);
+    priceMinFilter.addEventListener("change", filterOffers);
+    priceMaxFilter.addEventListener("change", filterOffers);
+
+    fetchOffers();
+});
