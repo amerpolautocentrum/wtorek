@@ -15,24 +15,36 @@
     <div class="offers-page">
         <h1>Nasze oferty</h1>
         <div id="filters">
-            <select id="brand" onchange="updateModels()">
+            <label for="brand-filter">Marka:</label>
+            <select id="brand-filter" onchange="updateModels()">
                 <option value="">Wybierz markę</option>
             </select>
+
+            <label for="model">Model:</label>
             <select id="model">
                 <option value="">Wybierz model</option>
             </select>
+
+            <label for="yearFrom">Rocznik od:</label>
             <select id="yearFrom">
                 <option value="">Rocznik od</option>
             </select>
+
+            <label for="yearTo">Rocznik do:</label>
             <select id="yearTo">
                 <option value="">Rocznik do</option>
             </select>
+
+            <label for="priceMin">Cena min:</label>
             <select id="priceMin">
                 <option value="">Cena min</option>
             </select>
+
+            <label for="priceMax">Cena max:</label>
             <select id="priceMax">
                 <option value="">Cena max</option>
             </select>
+
             <button onclick="filterOffers()">FILTRUJ</button>
         </div>
         <div id="offers-container"></div>
