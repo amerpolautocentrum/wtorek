@@ -1,0 +1,38 @@
+[
+    {
+        "title": "Audi A6 3.0 TDI Quattro 2018",
+        "image": "https://example.com/audi.jpg",
+        "price": "129000 PLN",
+        "link": "https://allegro.pl/oferta/audi-a6-3-0-tdi-quattro-2018-123456789"
+    },
+    {
+        "title": "BMW 530d 2019 M Pakiet",
+        "image": "https://example.com/bmw.jpg",
+        "price": "149900 PLN",
+        "link": "https://allegro.pl/oferta/bmw-530d-2019-m-pakiet-987654321"
+    },
+    {
+        "title": "Mercedes-Benz E220d 2017 Avantgarde",
+        "image": "https://example.com/mercedes.jpg",
+        "price": "139000 PLN",
+        "link": "https://allegro.pl/oferta/mercedes-benz-e220d-2017-avantgarde-555444333"
+    },
+    {
+        "title": "Volkswagen Passat 2.0 TDI 2016",
+        "image": "https://example.com/passat.jpg",
+        "price": "86900 PLN",
+        "link": "https://allegro.pl/oferta/volkswagen-passat-2-0-tdi-2016-999888777"
+    },
+    {
+        "title": "Toyota RAV4 Hybrid 2021",
+        "image": "https://example.com/rav4.jpg",
+        "price": "169000 PLN",
+        "link": "https://allegro.pl/oferta/toyota-rav4-hybrid-2021-777666555"
+    },
+    {
+        "title": "Ford Mustang GT 5.0 V8 2020",
+        "image": "https://example.com/mustang.jpg",
+        "price": "249000 PLN",
+        "link": "https://allegro.pl/oferta/ford-mustang-gt-5-0-v8-2020-123789456"
+    }
+]
