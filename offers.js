@@ -24,13 +24,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const xml = parser.parseFromString(xmlString, "text/xml");
         const items = xml.querySelectorAll("item");
         
-        allOffers = Array.from(items).map(item => ({
-            title: item.querySelector("title").textContent,
-            link: item.querySelector("link").textContent,
-            image: item.querySelector("enclosure")?.getAttribute("url") || "https://via.placeholder.com/200",
-            price: parseFloat(item.querySelector("description").textContent.match(/\d+[,.]?\d*/)?.[0]) || 0,
-            year: item.querySelector("title").textContent.match(/\d{4}/)?.[0] || ""
-        }));
+        allOffers = Array.from(items).map(item => {
+            const title = item.querySelector("title")?.textContent || "Brak tytułu";
+            const link = item.querySelector("link")?.textContent || "#";
+            const image = item.querySelector("enclosure")?.getAttribute("url") || "https://via.placeholder.com/200";
+            const priceMatch = item.querySelector("description")?.textContent.match(/\d+[,.]?\d*/);
+            const price = priceMatch ? parseFloat(priceMatch[0]) : 0;
+            const yearMatch = title.match(/\d{4}/);
+            const year = yearMatch ? yearMatch[0] : "";
+
+            return { title, link, image, price, year };
+        });
 
         displayOffers(allOffers.slice(0, 8));
         populateFilters();
