@@ -1,10 +1,9 @@
-const proxyUrl = "https://v0-new-project-kvl1xyzzkxa-arturs-projects-3e4c01bb.vercel.app";
+const proxyUrl = "https://allegro-proxy2.onrender.com/api/proxy";
 
 async function fetchOffers(offset = 0, limit = 6, filters = {}) {
     let url = `${proxyUrl}?offset=${offset}&limit=${limit}&sort=-publication.start`;
-    
     if (filters.brand) url += `&phrase=${encodeURIComponent(filters.brand)}`;
-    if (filters.model) url += `&phrase=${encodeURIComponent(filters.brand + " " + filters.model)}`;
+    if (filters.model) url += `&phrase=${encodeURIComponent(`${filters.brand || ''} ${filters.model}`)}`;
     if (filters.yearFrom) url += `¶meter.15326=${filters.yearFrom}`;
     if (filters.yearTo) url += `¶meter.15326=${filters.yearTo}`;
     if (filters.priceMin) url += `&price.from=${filters.priceMin}`;
@@ -23,7 +22,7 @@ async function fetchOffers(offset = 0, limit = 6, filters = {}) {
 
 async function loadInitialOffers() {
     const data = await fetchOffers(0, 6);
-    if (data.offers.length === 0) {
+    if (!data.offers || data.offers.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
     }
@@ -35,7 +34,7 @@ async function populateFiltersFromApi() {
     const data = await fetchOffers(0, 50);
     const offers = data.offers;
 
-    const knownBrands = ["Alfa Romeo", "Volkswagen", "Volvo", "Land Rover"];
+    const knownBrands = ["Alfa Romeo", "Volkswagen", "Volvo", "Land Rover", "BMW", "Audi"];
     const brands = [...new Set(offers.map(offer => {
         for (const brand of knownBrands) {
             if (offer.name.startsWith(brand)) return brand;
