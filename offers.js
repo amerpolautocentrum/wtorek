@@ -1,6 +1,6 @@
 const proxyUrl = "https://allegro-proxy2-production.up.railway.app/api/proxy";
 
-async function fetchOffers(offset = 0, limit = 8, filters = {}) { // Zmieniamy domyślny limit na 8
+async function fetchOffers(offset = 0, limit = 8, filters = {}) {
     let url = `${proxyUrl}?offset=${offset}&limit=${limit}&sort=-publication.start`;
     if (filters.brand) url += `&phrase=${encodeURIComponent(filters.brand)}`;
     if (filters.model) url += `&phrase=${encodeURIComponent(`${filters.brand || ''} ${filters.model}`)}`;
@@ -21,7 +21,8 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) { // Zmieniamy d
 }
 
 async function loadInitialOffers() {
-    const data = await fetchOffers(0, 8); // Zmieniamy z 6 na 8
+    const data = await fetchOffers(0, 50); // Testowo 50
+    console.log("Pobrane oferty:", data);
     if (!data.offers || data.offers.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
@@ -100,7 +101,7 @@ function updateModels() {
     if (brand) {
         fetchOffers(0, 50, { brand }).then(data => {
             const models = [...new Set(data.offers
-                .filter(offer => offer.name.toLowerCase().startsWith(brand.toLowerCase())) // Tylko wybrana marka
+                .filter(offer => offer.name.toLowerCase().startsWith(brand.toLowerCase()))
                 .map(offer => {
                     const parts = offer.name.split(" ");
                     const brandWords = brand.split(" ").length;
@@ -109,7 +110,7 @@ function updateModels() {
                     if (nextPart && !/^\d{4}$/.test(nextPart)) model += " " + nextPart;
                     return model;
                 })
-                .filter(model => model) // Usuwamy puste modele
+                .filter(model => model)
             )].sort();
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
@@ -119,6 +120,7 @@ function updateModels() {
 }
 
 async function filterOffers() {
+    console.log("Filtruję oferty...");
     const filters = {
         brand: document.getElementById("brand").value,
         model: document.getElementById("model").value,
@@ -127,8 +129,10 @@ async function filterOffers() {
         priceMin: document.getElementById("priceMin").value,
         priceMax: document.getElementById("priceMax").value
     };
+    console.log("Filtry:", filters);
 
-    const data = await fetchOffers(0, 8, filters); // Zmieniamy z 6 na 8
+    const data = await fetchOffers(0, 8, filters);
+    console.log("Dane z API:", data);
     displayOffers(data.offers);
 }
 
