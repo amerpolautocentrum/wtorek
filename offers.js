@@ -1,6 +1,6 @@
 const proxyUrl = "https://allegro-proxy2-production.up.railway.app/api/proxy";
 
-async function fetchOffers(offset = 0, limit = 6, filters = {}) {
+async function fetchOffers(offset = 0, limit = 8, filters = {}) { // Zmieniamy domyślny limit na 8
     let url = `${proxyUrl}?offset=${offset}&limit=${limit}&sort=-publication.start`;
     if (filters.brand) url += `&phrase=${encodeURIComponent(filters.brand)}`;
     if (filters.model) url += `&phrase=${encodeURIComponent(`${filters.brand || ''} ${filters.model}`)}`;
@@ -21,7 +21,7 @@ async function fetchOffers(offset = 0, limit = 6, filters = {}) {
 }
 
 async function loadInitialOffers() {
-    const data = await fetchOffers(0, 6);
+    const data = await fetchOffers(0, 8); // Zmieniamy z 6 na 8
     if (!data.offers || data.offers.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
@@ -99,14 +99,18 @@ function updateModels() {
 
     if (brand) {
         fetchOffers(0, 50, { brand }).then(data => {
-            const models = [...new Set(data.offers.map(offer => {
-                const parts = offer.name.split(" ");
-                const brandWords = brand.split(" ").length;
-                let model = parts[brandWords];
-                const nextPart = parts[brandWords + 1];
-                if (nextPart && !/^\d{4}$/.test(nextPart)) model += " " + nextPart;
-                return model;
-            }))].sort();
+            const models = [...new Set(data.offers
+                .filter(offer => offer.name.toLowerCase().startsWith(brand.toLowerCase())) // Tylko wybrana marka
+                .map(offer => {
+                    const parts = offer.name.split(" ");
+                    const brandWords = brand.split(" ").length;
+                    let model = parts[brandWords];
+                    const nextPart = parts[brandWords + 1];
+                    if (nextPart && !/^\d{4}$/.test(nextPart)) model += " " + nextPart;
+                    return model;
+                })
+                .filter(model => model) // Usuwamy puste modele
+            )].sort();
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
@@ -124,7 +128,7 @@ async function filterOffers() {
         priceMax: document.getElementById("priceMax").value
     };
 
-    const data = await fetchOffers(0, 6, filters);
+    const data = await fetchOffers(0, 8, filters); // Zmieniamy z 6 na 8
     displayOffers(data.offers);
 }
 
