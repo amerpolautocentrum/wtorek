@@ -1,4 +1,4 @@
-const proxyUrl = "https://allegro-proxy2.onrender.com/api/proxy";
+const proxyUrl = "https://allegro-proxy2-production.up.railway.app/api/proxy";
 
 async function fetchOffers(offset = 0, limit = 6, filters = {}) {
     let url = `${proxyUrl}?offset=${offset}&limit=${limit}&sort=-publication.start`;
