@@ -9,10 +9,12 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) {
     if (filters.priceMin) url += `&price.from=${filters.priceMin}`;
     if (filters.priceMax) url += `&price.to=${filters.priceMax}`;
 
+    console.log("Wysyłam zapytanie do:", url);
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
         const data = await response.json();
+        console.log("Otrzymane dane:", data);
         return data;
     } catch (error) {
         console.error("Błąd pobierania ofert:", error);
@@ -21,8 +23,8 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) {
 }
 
 async function loadInitialOffers() {
-    const data = await fetchOffers(0, 50); // Testowo 50
-    console.log("Pobrane oferty:", data);
+    const data = await fetchOffers(0, 8);
+    console.log("Pobrane oferty początkowe:", data);
     if (!data.offers || data.offers.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
@@ -76,6 +78,7 @@ async function populateFiltersFromApi() {
 }
 
 function displayOffers(offers) {
+    console.log("Wyświetlam oferty:", offers);
     const container = document.getElementById("offers-container");
     container.innerHTML = "";
     offers.forEach(offer => {
@@ -132,7 +135,7 @@ async function filterOffers() {
     console.log("Filtry:", filters);
 
     const data = await fetchOffers(0, 8, filters);
-    console.log("Dane z API:", data);
+    console.log("Dane z API po filtracji:", data);
     displayOffers(data.offers);
 }
 
