@@ -1,17 +1,27 @@
-const proxyUrl = "https://allegro-proxy2-production.up.railway.app/api/proxy";
+// Nowy offers.js dla FOX API
+
+const foxApiUrl = "https://sandbox.44fox.com/m/openapi/offers";
+const foxToken = "e370701bca9f24947ef8da6bc0813d9c1fdde2a7aa4bc328f0e329125659dc46"; // Twój token z sandboxa
 
 async function fetchOffers(offset = 0, limit = 8, filters = {}) {
-    let url = `${proxyUrl}?offset=${offset}&limit=${limit}&sort=-publication.start`;
-    if (filters.brand) url += `&phrase=${encodeURIComponent(filters.brand)}`;
-    if (filters.model) url += `&phrase=${encodeURIComponent(`${filters.brand || ''} ${filters.model}`)}`;
-    if (filters.yearFrom) url += `¶meter.15326=${filters.yearFrom}`;
-    if (filters.yearTo) url += `¶meter.15326=${filters.yearTo}`;
-    if (filters.priceMin) url += `&price.from=${filters.priceMin}`;
-    if (filters.priceMax) url += `&price.to=${filters.priceMax}`;
+    let url = `${foxApiUrl}?offset=${offset}&limit=${limit}`;
 
-    console.log("Wysyłam zapytanie do:", url);
+    if (filters.brand) url += `&brand=${encodeURIComponent(filters.brand)}`;
+    if (filters.model) url += `&model=${encodeURIComponent(filters.model)}`;
+    if (filters.yearFrom) url += `&yearFrom=${filters.yearFrom}`;
+    if (filters.yearTo) url += `&yearTo=${filters.yearTo}`;
+    if (filters.priceMin) url += `&priceFrom=${filters.priceMin}`;
+    if (filters.priceMax) url += `&priceTo=${filters.priceMax}`;
+
+    console.log("Zapytanie do FOX API:", url);
+
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            headers: {
+                "Authorization": `Bearer ${foxToken}`,
+                "Accept": "application/json"
+            }
+        });
         if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
         const data = await response.json();
         console.log("Otrzymane dane:", data);
@@ -24,7 +34,6 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) {
 
 async function loadInitialOffers() {
     const data = await fetchOffers(0, 8);
-    console.log("Pobrane oferty początkowe:", data);
     if (!data.offers || data.offers.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
@@ -37,13 +46,7 @@ async function populateFiltersFromApi() {
     const data = await fetchOffers(0, 50);
     const offers = data.offers;
 
-    const knownBrands = ["Alfa Romeo", "Volkswagen", "Volvo", "Land Rover", "BMW", "Audi"];
-    const brands = [...new Set(offers.map(offer => {
-        for (const brand of knownBrands) {
-            if (offer.name.startsWith(brand)) return brand;
-        }
-        return offer.name.split(" ")[0];
-    }))].sort();
+    const brands = [...new Set(offers.map(offer => offer.brand))].filter(Boolean).sort();
 
     const brandSelect = document.getElementById("brand");
     brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
@@ -56,7 +59,7 @@ async function populateFiltersFromApi() {
 
     updateModels();
 
-    const years = [...new Set(offers.map(offer => offer.name.match(/\d{4}/)?.[0]))].sort();
+    const years = [...new Set(offers.map(offer => offer.year))].filter(Boolean).sort();
     const yearFromSelect = document.getElementById("yearFrom");
     const yearToSelect = document.getElementById("yearTo");
     yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
@@ -65,32 +68,23 @@ async function populateFiltersFromApi() {
         yearFromSelect.innerHTML += `<option value="${year}">${year}</option>`;
         yearToSelect.innerHTML += `<option value="${year}">${year}</option>`;
     });
-
-    const prices = [...new Set(offers.map(offer => parseFloat(offer.sellingMode.price.amount)))].sort((a, b) => a - b);
-    const priceMinSelect = document.getElementById("priceMin");
-    const priceMaxSelect = document.getElementById("priceMax");
-    priceMinSelect.innerHTML = '<option value="">Cena min</option>';
-    priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
-    prices.forEach(price => {
-        priceMinSelect.innerHTML += `<option value="${price}">${price} PLN</option>`;
-        priceMaxSelect.innerHTML += `<option value="${price}">${price} PLN</option>`;
-    });
 }
 
 function displayOffers(offers) {
-    console.log("Wyświetlam oferty:", offers);
     const container = document.getElementById("offers-container");
     container.innerHTML = "";
+
     offers.forEach(offer => {
         const div = document.createElement("div");
         div.className = "offer-item";
         div.innerHTML = `
-            <h2>${offer.name}</h2>
-            <img src="${offer.primaryImage.url}" alt="${offer.name}" width="200">
-            <p>Cena: ${offer.sellingMode.price.amount} ${offer.sellingMode.price.currency}</p>
+            <h2>${offer.brand} ${offer.model}</h2>
+            <img src="${offer.photos && offer.photos.length ? offer.photos[0].url : ''}" alt="${offer.brand} ${offer.model}" width="200">
+            <p>Cena: ${offer.price} PLN</p>
+            <p>Rocznik: ${offer.year}</p>
         `;
         div.addEventListener("click", () => {
-            window.open(`https://allegro.pl/oferta/${offer.id}`, "_blank");
+            window.open(offer.link, "_blank");
         });
         container.appendChild(div);
     });
@@ -103,18 +97,7 @@ function updateModels() {
 
     if (brand) {
         fetchOffers(0, 50, { brand }).then(data => {
-            const models = [...new Set(data.offers
-                .filter(offer => offer.name.toLowerCase().startsWith(brand.toLowerCase()))
-                .map(offer => {
-                    const parts = offer.name.split(" ");
-                    const brandWords = brand.split(" ").length;
-                    let model = parts[brandWords];
-                    const nextPart = parts[brandWords + 1];
-                    if (nextPart && !/^\d{4}$/.test(nextPart)) model += " " + nextPart;
-                    return model;
-                })
-                .filter(model => model)
-            )].sort();
+            const models = [...new Set(data.offers.map(offer => offer.model))].filter(Boolean).sort();
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
@@ -123,7 +106,6 @@ function updateModels() {
 }
 
 async function filterOffers() {
-    console.log("Filtruję oferty...");
     const filters = {
         brand: document.getElementById("brand").value,
         model: document.getElementById("model").value,
@@ -132,11 +114,10 @@ async function filterOffers() {
         priceMin: document.getElementById("priceMin").value,
         priceMax: document.getElementById("priceMax").value
     };
-    console.log("Filtry:", filters);
 
     const data = await fetchOffers(0, 8, filters);
-    console.log("Dane z API po filtracji:", data);
     displayOffers(data.offers);
 }
 
+// Start
 loadInitialOffers();
