@@ -1,7 +1,6 @@
-// Finalna wersja offers.js dla produkcyjnego API FOX
+// Finalna wersja offers.js z proxy FOX API na Vercelu
 
-const foxApiUrl = "https://oferta.amer-pol.com/m/openapi/offers";
-const foxToken = "021990a9e67cfd35389f867fc0cf5ee4322ca152407e35264fb01186d578cd8b"; // Token produkcyjny
+const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
 async function fetchOffers(offset = 0, limit = 8, filters = {}) {
     let url = `${foxApiUrl}?offset=${offset}&limit=${limit}`;
@@ -10,18 +9,13 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) {
     if (filters.model) url += `&model=${encodeURIComponent(filters.model)}`;
     if (filters.yearFrom) url += `&yearFrom=${filters.yearFrom}`;
     if (filters.yearTo) url += `&yearTo=${filters.yearTo}`;
-    if (filters.priceMin) url += `&priceFrom=${filters.priceMin}`;
-    if (filters.priceMax) url += `&priceTo=${filters.priceMax}`;
+    if (filters.priceMin) url += `&priceMin=${filters.priceMin}`;
+    if (filters.priceMax) url += `&priceMax=${filters.priceMax}`;
 
-    console.log("Zapytanie do FOX API:", url);
+    console.log("Zapytanie do proxy:", url);
 
     try {
-        const response = await fetch(url, {
-            headers: {
-                "Authorization": `Bearer ${foxToken}`,
-                "Accept": "application/json"
-            }
-        });
+        const response = await fetch(url);
         if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
         const data = await response.json();
         console.log("Otrzymane dane:", data);
