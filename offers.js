@@ -1,7 +1,7 @@
-// Nowy offers.js dla FOX API
+// Finalna wersja offers.js dla produkcyjnego API FOX
 
-const foxApiUrl = "https://sandbox.44fox.com/m/openapi/offers";
-const foxToken = "e370701bca9f24947ef8da6bc0813d9c1fdde2a7aa4bc328f0e329125659dc46"; // Twój token z sandboxa
+const foxApiUrl = "https://oferta.amer-pol.com/m/openapi/offers";
+const foxToken = "021990a9e67cfd35389f867fc0cf5ee4322ca152407e35264fb01186d578cd8b"; // Token produkcyjny
 
 async function fetchOffers(offset = 0, limit = 8, filters = {}) {
     let url = `${foxApiUrl}?offset=${offset}&limit=${limit}`;
