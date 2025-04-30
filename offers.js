@@ -1,12 +1,11 @@
-// Finalna wersja offers.js — działa z proxy Vercela (POST do FOX API)
+// Finalna wersja offers.js — tylko offset i limit (zgodnie z wymaganiami FOX API)
 
 const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
-async function fetchOffers(offset = 0, limit = 8, filters = {}) {
+async function fetchOffers(offset = 0, limit = 8) {
     const body = {
         offset,
-        limit,
-        ...filters
+        limit
     };
 
     console.log("Zapytanie do proxy:", body);
@@ -96,7 +95,7 @@ function updateModels() {
     modelSelect.innerHTML = '<option value="">Wybierz model</option>';
 
     if (brand) {
-        fetchOffers(0, 50, { brand }).then(data => {
+        fetchOffers(0, 50).then(data => {
             const models = [...new Set(data.offers.map(offer => offer.model))].filter(Boolean).sort();
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
@@ -106,16 +105,7 @@ function updateModels() {
 }
 
 async function filterOffers() {
-    const filters = {
-        brand: document.getElementById("brand").value,
-        model: document.getElementById("model").value,
-        yearFrom: document.getElementById("yearFrom").value,
-        yearTo: document.getElementById("yearTo").value,
-        priceMin: document.getElementById("priceMin").value,
-        priceMax: document.getElementById("priceMax").value
-    };
-
-    const data = await fetchOffers(0, 8, filters);
+    const data = await fetchOffers(0, 8);
     displayOffers(data.offers);
 }
 
