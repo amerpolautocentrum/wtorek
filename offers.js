@@ -1,32 +1,31 @@
-// Tymczasowa wersja offers.js — test na sandboxie 44FOX
+// Finalna wersja offers.js — działa z proxy Vercela (POST do FOX API)
 
-const foxApiUrl = "https://sandbox.44fox.com/m/openapi/offers";
-const foxToken = "e370701bca9f24947ef8da6bc0813d9c1fdde2a7aa4bc328f0e329125659dc46"; // token testowy
+const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
 async function fetchOffers(offset = 0, limit = 8, filters = {}) {
-    let url = `${foxApiUrl}?offset=${offset}&limit=${limit}`;
-    if (filters.brand) url += `&brand=${encodeURIComponent(filters.brand)}`;
-    if (filters.model) url += `&model=${encodeURIComponent(filters.model)}`;
-    if (filters.yearFrom) url += `&yearFrom=${filters.yearFrom}`;
-    if (filters.yearTo) url += `&yearTo=${filters.yearTo}`;
-    if (filters.priceMin) url += `&priceFrom=${filters.priceMin}`;
-    if (filters.priceMax) url += `&priceTo=${filters.priceMax}`;
+    const body = {
+        offset,
+        limit,
+        ...filters
+    };
 
-    console.log("[SANDBOX] Zapytanie do FOX API:", url);
+    console.log("Zapytanie do proxy:", body);
 
     try {
-        const response = await fetch(url, {
+        const response = await fetch(foxApiUrl, {
+            method: "POST",
             headers: {
-                "Authorization": `Bearer ${foxToken}`,
-                "Accept": "application/json"
-            }
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
         });
 
+        if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
         const data = await response.json();
-        console.log("[SANDBOX] Otrzymane dane:", data);
+        console.log("Otrzymane dane:", data);
         return data;
     } catch (error) {
-        console.error("Błąd pobierania ofert z sandboxa:", error);
+        console.error("Błąd pobierania ofert:", error);
         return { offers: [] };
     }
 }
@@ -34,7 +33,7 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) {
 async function loadInitialOffers() {
     const data = await fetchOffers(0, 8);
     if (!data.offers || data.offers.length === 0) {
-        document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia (tryb testowy).</p>";
+        document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
     }
     displayOffers(data.offers);
