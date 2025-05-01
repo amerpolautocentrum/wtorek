@@ -1,14 +1,19 @@
-// Finalna wersja offers.js — tylko offset i limit (zgodnie z wymaganiami FOX API)
+// Finalna wersja offers.js — obsługuje prawidłowy format zapytania dla FOX API
 
 const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
+// Obliczamy numer strony na podstawie offsetu i limitu
+function getPage(offset, limit) {
+    return Math.floor(offset / limit) + 1;
+}
+
 async function fetchOffers(offset = 0, limit = 8) {
     const body = {
-        offset,
-        limit
+        page: getPage(offset, limit),
+        limit: limit
     };
 
-    console.log("Zapytanie do proxy:", body);
+    console.log("Zapytanie do proxy (FOX /api/offers/list):", body);
 
     try {
         const response = await fetch(foxApiUrl, {
