@@ -45,7 +45,7 @@ function displayOffers(offers) {
         `;
         if (offer.id) {
             div.addEventListener("click", () => {
-                window.open(\`https://oferta.amer-pol.com/oferta/${offer.id}\`, "_blank");
+                window.open("https://oferta.amer-pol.com/oferta/" + offer.id, "_blank");
             });
         }
         container.appendChild(div);
