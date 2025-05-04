@@ -1,42 +1,41 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oferty - Amer-Pol Auto Centrum</title>
-    <link rel="stylesheet" href="style.css?v=9">
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Oferty Samochodów</title>
+  <style>
+    .filters { margin-bottom: 20px; }
+    .filters label { margin-right: 10px; }
+    .filters select, .filters button { margin-right: 20px; }
+    .offer-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+  </style>
 </head>
 <body>
-    <nav class="main-nav">
-        <a href="https://www.amerpolautocentrum.pl/">STRONA GŁÓWNA</a>
-    </nav>
 
-    <div class="offers-page">
-        <h1>Nasze oferty</h1>
-        <div id="filters">
-            <select id="brand" onchange="updateModels()">
-                <option value="">Wybierz markę</option>
-            </select>
-            <select id="model">
-                <option value="">Wybierz model</option>
-            </select>
-            <select id="yearFrom">
-                <option value="">Rocznik od</option>
-            </select>
-            <select id="yearTo">
-                <option value="">Rocznik do</option>
-            </select>
-            <select id="priceMin">
-                <option value="">Cena min</option>
-            </select>
-            <select id="priceMax">
-                <option value="">Cena max</option>
-            </select>
-            <button onclick="filterOffers()">FILTRUJ</button>
-        </div>
-        <div id="offers-container"></div>
-    </div>
-    <script src="offers.js"></script>
+  <div class="filters">
+    <label for="brand">Marka:</label>
+    <select id="brand"></select>
+
+    <label for="model">Model:</label>
+    <select id="model"></select>
+
+    <label for="yearFrom">Rocznik od:</label>
+    <select id="yearFrom"></select>
+
+    <label for="yearTo">Rocznik do:</label>
+    <select id="yearTo"></select>
+
+    <label for="priceMin">Cena min:</label>
+    <select id="priceMin"></select>
+
+    <label for="priceMax">Cena max:</label>
+    <select id="priceMax"></select>
+
+    <button id="filter-button">FILTRUJ</button>
+  </div>
+
+  <div id="offers-container"></div>
+
+  <script src="offers.js"></script>
 </body>
 </html>
