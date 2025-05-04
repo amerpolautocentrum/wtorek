@@ -1,20 +1,15 @@
-// Finalna wersja offers.js — z pełnymi danymi z FOX (przez proxy, każde ogłoszenie z /get)
+// Finalna wersja offers.js — 8 pełnych ofert + dane do filtrów (lekkie)
 
 const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
 async function fetchOffers(offset = 0, limit = 8) {
-    const body = {
-        offset,
-        limit
-    };
-
     try {
         const response = await fetch(foxApiUrl, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify({ offset, limit })
         });
 
         if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
@@ -22,22 +17,22 @@ async function fetchOffers(offset = 0, limit = 8) {
         return data;
     } catch (error) {
         console.error("Błąd pobierania ofert:", error);
-        return { offers: [] };
+        return { full: [], all: [] };
     }
 }
 
 async function loadInitialOffers() {
     const data = await fetchOffers(0, 8);
-    if (!data.offers || data.offers.length === 0) {
+    if (!data.full || data.full.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
     }
-    displayOffers(data.offers);
-    populateFiltersFromApi(data.offers);
+    displayOffers(data.full);
+    populateFiltersFromApi(data.all);
 }
 
 function populateFiltersFromApi(offers) {
-    const brands = [...new Set(offers.map(offer => offer.data?.id_make))].filter(Boolean).sort();
+    const brands = [...new Set(offers.map(offer => offer.id_make))].filter(Boolean).sort();
     const brandSelect = document.getElementById("brand");
     brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
     brands.forEach(brand => {
@@ -49,7 +44,7 @@ function populateFiltersFromApi(offers) {
 
     updateModels(offers);
 
-    const years = [...new Set(offers.map(offer => offer.data?.yearproduction))].filter(Boolean).sort();
+    const years = [...new Set(offers.map(offer => offer.yearproduction))].filter(Boolean).sort();
     const yearFromSelect = document.getElementById("yearFrom");
     const yearToSelect = document.getElementById("yearTo");
     yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
@@ -59,7 +54,7 @@ function populateFiltersFromApi(offers) {
         yearToSelect.innerHTML += `<option value="${year}">${year}</option>`;
     });
 
-    const prices = [...new Set(offers.map(offer => parseFloat(offer.data?.price)))].filter(n => !isNaN(n)).sort((a, b) => a - b);
+    const prices = [...new Set(offers.map(offer => parseFloat(offer.price)))].filter(n => !isNaN(n)).sort((a, b) => a - b);
     const priceMinSelect = document.getElementById("priceMin");
     const priceMaxSelect = document.getElementById("priceMax");
     priceMinSelect.innerHTML = '<option value="">Cena min</option>';
@@ -84,6 +79,11 @@ function displayOffers(offers) {
             <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
             <p>Cena: ${d.price || 'brak'} ${d.currency?.toUpperCase() || ''}</p>
         `;
+        if (d.url) {
+            div.addEventListener("click", () => {
+                window.open(d.url, "_blank");
+            });
+        }
         container.appendChild(div);
     });
 }
@@ -95,8 +95,8 @@ function updateModels(offers) {
 
     if (brand) {
         const models = [...new Set(offers
-            .filter(offer => offer.data?.id_make === brand)
-            .map(offer => offer.data?.id_model))]
+            .filter(offer => offer.id_make === brand)
+            .map(offer => offer.id_model))]
             .filter(Boolean).sort();
 
         models.forEach(model => {
@@ -115,8 +115,8 @@ async function filterOffers() {
         priceMax: document.getElementById("priceMax").value
     };
 
-    const data = await fetchOffers(0, 50);
-    const filtered = data.offers.filter(offer => {
+    const data = await fetchOffers(0, 1000);
+    const filtered = data.full.filter(offer => {
         const d = offer.data || {};
         return (!filters.brand || d.id_make === filters.brand) &&
                (!filters.model || d.id_model === filters.model) &&
