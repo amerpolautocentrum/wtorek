@@ -1,89 +1,54 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Nasze oferty</title>
-  <style>
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      margin: 20px 0;
-    }
-
-    .filters {
-      margin-bottom: 30px;
-    }
-
-    .filters select, .filters button {
-      margin: 5px;
-      padding: 8px;
-      font-size: 14px;
-      border-radius: 5px;
-    }
-
-    .filters button {
-      background-color: #e74c3c;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-
-    #offers-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      padding: 0 20px;
-    }
-
-    .offer-item {
-      background-color: #1c1c1c;
-      border-radius: 10px;
-      padding: 15px;
-      width: 220px;
-      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
-      cursor: pointer;
-    }
-
-    .offer-item img {
-      max-width: 100%;
-      height: auto;
-      border-radius: 5px;
-      margin-bottom: 10px;
-    }
-
-    .offer-item h2 {
-      font-size: 18px;
-      margin: 10px 0;
-    }
-
-    .offer-item p {
-      font-size: 14px;
-      margin: 5px 0;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oferty - Amer-Pol Auto Centrum</title>
+    <link rel="stylesheet" href="style.css?v=9">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav class="main-nav">
+        <a href="https://www.amerpolautocentrum.pl/">STRONA GŁÓWNA</a>
+    </nav>
 
-  <h1>Nasze oferty</h1>
+    <div class="offers-page">
+        <h1>Nasze oferty</h1>
+        <div id="filters">
+            <label for="brand-filter">Marka:</label>
+            <select id="brand-filter" onchange="updateModels()">
+                <option value="">Wybierz markę</option>
+            </select>
 
-  <div class="filters">
-    <select id="brand"><option>Wybierz markę</option></select>
-    <select id="model"><option>Wybierz model</option></select>
-    <select id="yearFrom"><option>Rocznik od</option></select>
-    <select id="yearTo"><option>Rocznik do</option></select>
-    <select id="priceMin"><option>Cena min</option></select>
-    <select id="priceMax"><option>Cena max</option></select>
-    <button id="filter-button">FILTRUJ</button>
-  </div>
+            <label for="model">Model:</label>
+            <select id="model">
+                <option value="">Wybierz model</option>
+            </select>
 
-  <div id="offers-container"></div>
+            <label for="yearFrom">Rocznik od:</label>
+            <select id="yearFrom">
+                <option value="">Rocznik od</option>
+            </select>
 
-  <script src="offers.js"></script>
+            <label for="yearTo">Rocznik do:</label>
+            <select id="yearTo">
+                <option value="">Rocznik do</option>
+            </select>
+
+            <label for="priceMin">Cena min:</label>
+            <select id="priceMin">
+                <option value="">Cena min</option>
+            </select>
+
+            <label for="priceMax">Cena max:</label>
+            <select id="priceMax">
+                <option value="">Cena max</option>
+            </select>
+
+            <button id="filter-button">FILTRUJ</button>
+        </div>
+        <div id="offers-container"></div>
+    </div>
+    <script src="offers.js"></script>
 </body>
 </html>
