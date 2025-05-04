@@ -1,4 +1,4 @@
-const apiUrl = 'https://api-offers.vercel.app/api/offers'; // Poprawny adres projektu Vercel
+const apiUrl = 'https://api-offers.vercel.app/api'; // Zaktualizowano na nową ścieżkę Vercel
 
 // Funkcja do pobierania danych z API
 async function fetchListings(params = {}) {
@@ -33,9 +33,6 @@ async function fetchListings(params = {}) {
         return data.offers || [];
     } catch (error) {
         console.error('Błąd pobierania danych:', error.message);
-        if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
-            console.error('Prawdopodobny problem z CORS lub niedostępnym endpointem:', apiUrl);
-        }
         return [];
     }
 }
