@@ -1,4 +1,4 @@
-// Finalna wersja offers.js — 8 pełnych ofert + dane do filtrów (lekkie)
+// Finalna wersja offers.js — 8 ogłoszeń + filtry z przekierowaniem na stronę oferty
 
 const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
@@ -21,12 +21,15 @@ async function fetchOffers(offset = 0, limit = 8) {
     }
 }
 
+let allOffers = [];
+
 async function loadInitialOffers() {
     const data = await fetchOffers(0, 8);
     if (!data.full || data.full.length === 0) {
         document.getElementById("offers-container").innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
         return;
     }
+    allOffers = data.all;
     displayOffers(data.full);
     populateFiltersFromApi(data.all);
 }
@@ -42,7 +45,7 @@ function populateFiltersFromApi(offers) {
         brandSelect.appendChild(option);
     });
 
-    updateModels(offers);
+    updateModels();
 
     const years = [...new Set(offers.map(offer => offer.yearproduction))].filter(Boolean).sort();
     const yearFromSelect = document.getElementById("yearFrom");
@@ -79,22 +82,23 @@ function displayOffers(offers) {
             <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
             <p>Cena: ${d.price || 'brak'} ${d.currency?.toUpperCase() || ''}</p>
         `;
-        if (d.url) {
+        if (offer.id) {
+            const url = `https://oferta.amer-pol.com/oferta/${offer.id}`;
             div.addEventListener("click", () => {
-                window.open(d.url, "_blank");
+                window.open(url, "_blank");
             });
         }
         container.appendChild(div);
     });
 }
 
-function updateModels(offers) {
+function updateModels() {
     const brand = document.getElementById("brand").value;
     const modelSelect = document.getElementById("model");
     modelSelect.innerHTML = '<option value="">Wybierz model</option>';
 
     if (brand) {
-        const models = [...new Set(offers
+        const models = [...new Set(allOffers
             .filter(offer => offer.id_make === brand)
             .map(offer => offer.id_model))]
             .filter(Boolean).sort();
@@ -105,7 +109,9 @@ function updateModels(offers) {
     }
 }
 
-async function filterOffers() {
+document.getElementById("brand").addEventListener("change", updateModels);
+
+document.getElementById("filter-button").addEventListener("click", async () => {
     const filters = {
         brand: document.getElementById("brand").value,
         model: document.getElementById("model").value,
@@ -115,7 +121,7 @@ async function filterOffers() {
         priceMax: document.getElementById("priceMax").value
     };
 
-    const data = await fetchOffers(0, 1000);
+    const data = await fetchOffers(0, 50);
     const filtered = data.full.filter(offer => {
         const d = offer.data || {};
         return (!filters.brand || d.id_make === filters.brand) &&
@@ -127,6 +133,6 @@ async function filterOffers() {
     });
 
     displayOffers(filtered);
-}
+});
 
 loadInitialOffers();
