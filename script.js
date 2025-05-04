@@ -1,4 +1,4 @@
-const apiUrl = '/api/offers'; // Zmień na właściwy adres Vercela, np. https://twoj-projekt.vercel.app/api/offers
+const apiUrl = 'https://api-offers.vercel.app/'; // Zmień na właściwy adres Vercela, np. https://twoj-projekt.vercel.app/api/offers
 
    // Funkcja do pobierania danych z API
    async function fetchListings(params = {}) {
