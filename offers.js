@@ -1,19 +1,13 @@
-// Finalna wersja offers.js — obsługuje prawidłowy format zapytania dla FOX API
+// Finalna wersja offers.js — działa z API FOX przez proxy Vercel
 
 const foxApiUrl = "https://api-offers.vercel.app/api/offers";
 
-// Obliczamy numer strony na podstawie offsetu i limitu
-function getPage(offset, limit) {
-    return Math.floor(offset / limit) + 1;
-}
-
+// Pomocnicza funkcja do pobierania ofert z proxy
 async function fetchOffers(offset = 0, limit = 8) {
     const body = {
-        page: getPage(offset, limit),
-        limit: limit
+        offset,
+        limit
     };
-
-    console.log("Zapytanie do proxy (FOX /api/offers/list):", body);
 
     try {
         const response = await fetch(foxApiUrl, {
@@ -26,7 +20,6 @@ async function fetchOffers(offset = 0, limit = 8) {
 
         if (!response.ok) throw new Error(`Błąd HTTP: ${response.status}`);
         const data = await response.json();
-        console.log("Otrzymane dane:", data);
         return data;
     } catch (error) {
         console.error("Błąd pobierania ofert:", error);
@@ -34,6 +27,7 @@ async function fetchOffers(offset = 0, limit = 8) {
     }
 }
 
+// Inicjalne załadowanie ofert
 async function loadInitialOffers() {
     const data = await fetchOffers(0, 8);
     if (!data.offers || data.offers.length === 0) {
@@ -44,12 +38,12 @@ async function loadInitialOffers() {
     populateFiltersFromApi();
 }
 
+// Wypełnienie filtrów markami, modelami, rocznikami, cenami
 async function populateFiltersFromApi() {
     const data = await fetchOffers(0, 50);
     const offers = data.offers || [];
 
-    const brands = [...new Set(offers.map(offer => offer.brand))].filter(Boolean).sort();
-
+    const brands = [...new Set(offers.map(offer => offer.data?.id_make))].filter(Boolean).sort();
     const brandSelect = document.getElementById("brand");
     brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
     brands.forEach(brand => {
@@ -61,7 +55,7 @@ async function populateFiltersFromApi() {
 
     updateModels();
 
-    const years = [...new Set(offers.map(offer => offer.year))].filter(Boolean).sort();
+    const years = [...new Set(offers.map(offer => offer.data?.yearproduction))].filter(Boolean).sort();
     const yearFromSelect = document.getElementById("yearFrom");
     const yearToSelect = document.getElementById("yearTo");
     yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
@@ -70,30 +64,38 @@ async function populateFiltersFromApi() {
         yearFromSelect.innerHTML += `<option value="${year}">${year}</option>`;
         yearToSelect.innerHTML += `<option value="${year}">${year}</option>`;
     });
+
+    const prices = [...new Set(offers.map(offer => parseFloat(offer.data?.price)))].filter(n => !isNaN(n)).sort((a, b) => a - b);
+    const priceMinSelect = document.getElementById("priceMin");
+    const priceMaxSelect = document.getElementById("priceMax");
+    priceMinSelect.innerHTML = '<option value="">Cena min</option>';
+    priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
+    prices.forEach(price => {
+        priceMinSelect.innerHTML += `<option value="${price}">${price} PLN</option>`;
+        priceMaxSelect.innerHTML += `<option value="${price}">${price} PLN</option>`;
+    });
 }
 
+// Wyświetlanie ofert na stronie
 function displayOffers(offers) {
     const container = document.getElementById("offers-container");
     container.innerHTML = "";
 
     offers.forEach(offer => {
+        const data = offer.data || {};
         const div = document.createElement("div");
         div.className = "offer-item";
         div.innerHTML = `
-            <h2>${offer.brand || ''} ${offer.model || ''}</h2>
-            <img src="${offer.photos && offer.photos.length ? offer.photos[0].url : ''}" alt="${offer.brand || ''} ${offer.model || ''}" width="200">
-            <p>Cena: ${offer.price || 'brak'} PLN</p>
-            <p>Rocznik: ${offer.year || 'nieznany'}</p>
+            <h2>${data.id_make || ''} ${data.id_model || ''}</h2>
+            <img src="${data.mainimage || ''}" alt="${data.title || ''}" width="200">
+            <p>${data.yearproduction || ''} • ${data.power || ''} KM • ${data.mileage || ''} km</p>
+            <p>Cena: ${data.price || 'brak'} ${data.currency?.toUpperCase() || ''}</p>
         `;
-        if (offer.link) {
-            div.addEventListener("click", () => {
-                window.open(offer.link, "_blank");
-            });
-        }
         container.appendChild(div);
     });
 }
 
+// Wypełnianie modeli po wyborze marki
 function updateModels() {
     const brand = document.getElementById("brand").value;
     const modelSelect = document.getElementById("model");
@@ -101,7 +103,11 @@ function updateModels() {
 
     if (brand) {
         fetchOffers(0, 50).then(data => {
-            const models = [...new Set(data.offers.map(offer => offer.model))].filter(Boolean).sort();
+            const models = [...new Set(data.offers
+                .filter(offer => offer.data?.id_make === brand)
+                .map(offer => offer.data?.id_model))]
+                .filter(Boolean).sort();
+
             models.forEach(model => {
                 modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
@@ -109,9 +115,29 @@ function updateModels() {
     }
 }
 
+// Filtracja ofert (na razie uproszczona do podstawowych pól)
 async function filterOffers() {
-    const data = await fetchOffers(0, 8);
-    displayOffers(data.offers);
+    const filters = {
+        brand: document.getElementById("brand").value,
+        model: document.getElementById("model").value,
+        yearFrom: document.getElementById("yearFrom").value,
+        yearTo: document.getElementById("yearTo").value,
+        priceMin: document.getElementById("priceMin").value,
+        priceMax: document.getElementById("priceMax").value
+    };
+
+    const data = await fetchOffers(0, 50); // tymczasowo bez backendowych filtrów
+    const filtered = data.offers.filter(offer => {
+        const d = offer.data || {};
+        return (!filters.brand || d.id_make === filters.brand) &&
+               (!filters.model || d.id_model === filters.model) &&
+               (!filters.yearFrom || parseInt(d.yearproduction) >= parseInt(filters.yearFrom)) &&
+               (!filters.yearTo || parseInt(d.yearproduction) <= parseInt(filters.yearTo)) &&
+               (!filters.priceMin || parseFloat(d.price) >= parseFloat(filters.priceMin)) &&
+               (!filters.priceMax || parseFloat(d.price) <= parseFloat(filters.priceMax));
+    });
+
+    displayOffers(filtered);
 }
 
 // Start
