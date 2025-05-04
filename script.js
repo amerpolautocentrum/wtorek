@@ -1,16 +1,18 @@
-const apiUrl = '/api/offers'; // Endpoint Vercela, zmień na właściwy, jeśli inny
+const apiUrl = 'https://44fox.com/m/openapi'; // Bezpośredni endpoint API
 
 // Funkcja do pobierania danych z API
 async function fetchListings(params = {}) {
     try {
+        const token = '021990a9e67cfd35389f867fc0cf5ee4322ca152407e35264fb01186d578cd8b';
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authentication': `Bearer ${token}`
             },
             body: JSON.stringify({
                 account: {
-                    token: '3f559f0bdd542b4b0348459dce190878271d3afcce65ab602fd327c18b64ea90' // Zastąp swoim tokenem
+                    token: token
                 },
                 data: {
                     detaillevel: 'simple',
@@ -24,12 +26,15 @@ async function fetchListings(params = {}) {
             })
         });
         if (!response.ok) {
-            throw new Error('Błąd podczas pobierania danych');
+            throw new Error(`Błąd HTTP: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
-        return data.offers || []; // Zwraca listę ofert
+        if (data.status !== 'success') {
+            throw new Error(`Błąd API: ${data.message || 'Nieznany błąd'}`);
+        }
+        return data.offers || [];
     } catch (error) {
-        console.error('Błąd:', error);
+        console.error('Błąd pobierania danych:', error.message);
         return [];
     }
 }
@@ -37,6 +42,10 @@ async function fetchListings(params = {}) {
 // Funkcja do wyświetlania ogłoszeń
 function displayListings(listings, containerId, limit = null) {
     const container = document.getElementById(containerId);
+    if (!container) {
+        console.error(`Kontener ${containerId} nie istnieje`);
+        return;
+    }
     container.innerHTML = '';
 
     if (listings.length === 0) {
@@ -59,7 +68,11 @@ function displayListings(listings, containerId, limit = null) {
             </div>
         `;
         div.addEventListener('click', () => {
-            window.open(listing.url, '_blank'); // Przekierowanie do FOX
+            if (listing.url) {
+                window.open(listing.url, '_blank');
+            } else {
+                console.error('Brak URL dla ogłoszenia:', listing.id);
+            }
         });
         container.appendChild(div);
     });
@@ -78,28 +91,42 @@ async function filterListings(filters) {
 }
 
 // Inicjalne ładowanie 8 przykładowych ogłoszeń
-window.addEventListener('load', async () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const listings = await fetchListings({ limit: 8 });
     displayListings(listings, 'featured-listings', 8);
 });
 
 // Obsługa przycisku "Pokaż więcej"
-document.getElementById('show-more').addEventListener('click', () => {
-    const filterSection = document.getElementById('filter-section');
-    filterSection.style.display = 'block';
-    document.getElementById('show-more').style.display = 'none';
-});
+const showMoreButton = document.getElementById('show-more');
+if (showMoreButton) {
+    showMoreButton.addEventListener('click', () => {
+        const filterSection = document.getElementById('filter-section');
+        if (filterSection) {
+            filterSection.style.display = 'block';
+            showMoreButton.style.display = 'none';
+        } else {
+            console.error('Sekcja filtrowania nie istnieje');
+        }
+    });
+} else {
+    console.error('Przycisk "show-more" nie istnieje');
+}
 
 // Obsługa formularza filtrowania
-document.getElementById('filter-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
+const filterForm = document.getElementById('filter-form');
+if (filterForm) {
+    filterForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-    const filters = {
-        brand: document.getElementById('brand').value,
-        priceMin: parseInt(document.getElementById('price-min').value) || 0,
-        priceMax: parseInt(document.getElementById('price-max').value) || Infinity,
-        year: parseInt(document.getElementById('year').value) || 0
-    };
+        const filters = {
+            brand: document.getElementById('brand').value,
+            priceMin: parseInt(document.getElementById('price-min').value) || 0,
+            priceMax: parseInt(document.getElementById('price-max').value) || Infinity,
+            year: parseInt(document.getElementById('year').value) || 0
+        };
 
-    await filterListings(filters);
-});
+        await filterListings(filters);
+    });
+} else {
+    console.error('Formularz filtrowania nie istnieje');
+}
