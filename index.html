@@ -1,53 +1,35 @@
 <!DOCTYPE html>
-   <html lang="pl">
-   <head>
-       <meta charset="UTF-8">
-       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-       <title>Amerpol Autocentrum - Oferty</title>
-       <link rel="stylesheet" href="style.css">
-   </head>
-   <body>
-       <header>
-           <h1>Amerpol Autocentrum</h1>
-           <nav>
-               <a href="/">Strona główna</a>
-               <a href="#offers">Oferty</a>
-               <a href="/kontakt">Kontakt</a>
-           </nav>
-       </header>
-
-       <section id="offers">
-           <h2>Nasze Oferty</h2>
-           <div id="featured-listings" class="listings-grid"></div>
-           <button id="show-more">Pokaż więcej ofert</button>
-
-           <div id="filter-section" style="display: none;">
-               <h3>Filtruj oferty</h3>
-               <form id="filter-form">
-                   <label for="brand">Marka:</label>
-                   <select id="brand" name="brand">
-                       <option value="">Wszystkie</option>
-                       <option value="ford">Ford</option>
-                       <option value="toyota">Toyota</option>
-                       <option value="bmw">BMW</option>
-                       <option value="volkswagen">Volkswagen</option>
-                   </select>
-
-                   <label for="price-min">Cena od:</label>
-                   <input type="number" id="price-min" name="price-min" placeholder="0">
-
-                   <label for="price-max">Cena do:</label>
-                   <input type="number" id="price-max" name="price-max" placeholder="1000000">
-
-                   <label for="year">Rok od:</label>
-                   <input type="number" id="year" name="year" placeholder="2000">
-
-                   <button type="submit">Filtruj</button>
-               </form>
-               <div id="filtered-listings" class="listings-grid"></div>
-           </div>
-       </section>
-
-       <script src="script.js"></script>
-   </body>
-   </html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amer-Pol Auto Centrum</title>
+    <link rel="stylesheet" href="style.css?v=5"> <!-- Wymuszone wczytanie nowej wersji -->
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700&display=swap" rel="stylesheet"> <!-- Dodana czcionka -->
+</head>
+<body>
+    <div class="gallery">
+        <section class="slide"><img src="grafika1.png" class="gallery-image" alt="Grafika 1"></section>
+        <section class="slide"><img src="grafika2.png" class="gallery-image" alt="Grafika 2"></section>
+        <section class="slide">
+            <img src="grafika3.png" class="gallery-image" alt="Grafika 3">
+            <div class="blog-button">
+                <a href="blog.html">📖 Przejdź do bloga</a>
+            </div>
+        </section>
+        <section class="slide"><img src="grafika4.png" class="gallery-image" alt="Grafika 4"></section>
+        <section class="slide">
+            <img src="grafika5.png" class="gallery-image" alt="Grafika 5">
+            <div class="social-logos">
+                <a href="https://www.facebook.com/profile.php?id=61572505500002" target="_blank">
+                    <img src="logofb.png" alt="Facebook" class="social-icon">
+                </a>
+                <a href="https://www.tiktok.com/@amerpol.auto.cent" target="_blank">
+                    <img src="tiktok.png" alt="TikTok" class="social-icon">
+                </a>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

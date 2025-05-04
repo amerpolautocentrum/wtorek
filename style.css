@@ -1,121 +1,98 @@
 body {
-    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 22px;
+    color: #333;
     margin: 0;
     padding: 0;
-    line-height: 1.6;
 }
 
-header {
-    background: #333;
-    color: #fff;
+/* Nagłówek */
+.blog-header {
     text-align: center;
-    padding: 1rem;
+    padding: 20px;
+    background: #cc0000;
+    color: white;
+    font-size: 28px;
 }
 
-nav a {
-    color: #fff;
-    margin: 0 1rem;
+.blog-subtitle {
+    font-size: 18px;
+    margin-top: -10px;
+}
+
+/* Kontener treści */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Grafiki we wpisach blogowych */
+.container img {
+    max-width: 100%; /* Skalowanie do szerokości kontenera */
+    height: auto; /* Zachowanie proporcji */
+    display: block;
+    margin: 20px auto; /* Centrowanie obrazka */
+    border-radius: 8px; /* Zaokrąglenie rogów */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Lekki cień */
+}
+
+/* Lista artykułów */
+.article-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.article-list article {
+    display: flex;
+    align-items: center;
+    border-left: 5px solid #cc0000; /* Czerwony pasek */
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: 0.3s;
+    background: none;
+}
+
+/* Usunięcie podkreślenia linków */
+.article-list a {
     text-decoration: none;
 }
 
-nav a:hover {
-    text-decoration: underline;
+/* Pierwsza linia w przycisku - wyróżniona */
+.article-list p strong {
+    font-size: 24px;
+    color: #cc0000;
+    font-weight: bold;
 }
 
-#offers {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+/* Druga linia w przycisku - standardowa */
+.article-list p {
+    font-size: 20px;
+    color: #333;
+    font-weight: normal;
 }
 
-.listings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    margin-bottom: 2rem;
-}
-
-.listing {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.listing:hover {
-    transform: scale(1.03);
-}
-
-.listing img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-}
-
-.listing-content {
-    padding: 1rem;
-}
-
-.listing h3 {
-    margin: 0;
-    font-size: 1.2rem;
-    text-transform: capitalize;
-}
-
-.listing p {
-    margin: 0.5rem 0;
-}
-
-#show-more {
+/* Przyciski powrotu */
+.back-home, .back-link {
     display: block;
-    margin: 1rem auto;
-    padding: 0.5rem 1rem;
-    background: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#show-more:hover {
-    background: #555;
-}
-
-#filter-section {
-    margin-top: 2rem;
-    padding: 1rem;
-    border: 1px solid #ccc;
+    margin-top: 20px;
+    font-weight: bold;
+    color: white;
+    background: #cc0000;
+    padding: 10px 15px;
+    text-align: center;
+    width: 200px;
     border-radius: 5px;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
-#filter-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-#filter-form label {
-    margin-right: 0.5rem;
-}
-
-#filter-form select,
-#filter-form input {
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#filter-form button {
-    padding: 0.5rem 1rem;
-    background: #333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#filter-form button:hover {
-    background: #555;
+.back-home:hover, .back-link:hover {
+    background: #a00000;
 }
