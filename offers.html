@@ -2,35 +2,83 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Oferty Samochodów</title>
+  <title>Nasze oferty</title>
   <style>
-    .filters { margin-bottom: 20px; }
-    .filters label { margin-right: 10px; }
-    .filters select, .filters button { margin-right: 20px; }
-    .offer-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 20px 0;
+    }
+
+    .filters {
+      margin-bottom: 30px;
+    }
+
+    .filters select, .filters button {
+      margin: 5px;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+
+    .filters button {
+      background-color: #e74c3c;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    #offers-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 0 20px;
+    }
+
+    .offer-item {
+      background-color: #1c1c1c;
+      border-radius: 10px;
+      padding: 15px;
+      width: 220px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+      cursor: pointer;
+    }
+
+    .offer-item img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .offer-item h2 {
+      font-size: 18px;
+      margin: 10px 0;
+    }
+
+    .offer-item p {
+      font-size: 14px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
 
+  <h1>Nasze oferty</h1>
+
   <div class="filters">
-    <label for="brand">Marka:</label>
-    <select id="brand"></select>
-
-    <label for="model">Model:</label>
-    <select id="model"></select>
-
-    <label for="yearFrom">Rocznik od:</label>
-    <select id="yearFrom"></select>
-
-    <label for="yearTo">Rocznik do:</label>
-    <select id="yearTo"></select>
-
-    <label for="priceMin">Cena min:</label>
-    <select id="priceMin"></select>
-
-    <label for="priceMax">Cena max:</label>
-    <select id="priceMax"></select>
-
+    <select id="brand"><option>Wybierz markę</option></select>
+    <select id="model"><option>Wybierz model</option></select>
+    <select id="yearFrom"><option>Rocznik od</option></select>
+    <select id="yearTo"><option>Rocznik do</option></select>
+    <select id="priceMin"><option>Cena min</option></select>
+    <select id="priceMax"><option>Cena max</option></select>
     <button id="filter-button">FILTRUJ</button>
   </div>
 
