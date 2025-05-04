@@ -1,18 +1,16 @@
-const apiUrl = 'https://44fox.com/m/openapi'; // Bezpośredni endpoint API
+const apiUrl = '/api/offers'; // Endpoint Vercela, zmień na właściwy, np. https://twoj-projekt.vercel.app/api/offers
 
 // Funkcja do pobierania danych z API
 async function fetchListings(params = {}) {
     try {
-        const token = '021990a9e67cfd35389f867fc0cf5ee4322ca152407e35264fb01186d578cd8b';
         const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'Authentication': `Bearer ${token}`
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({
                 account: {
-                    token: token
+                    token: '021990a9e67cfd35389f867fc0cf5ee4322ca152407e35264fb01186d578cd8b'
                 },
                 data: {
                     detaillevel: 'simple',
