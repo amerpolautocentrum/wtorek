@@ -1,53 +1,53 @@
 <!DOCTYPE html>
-<html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Amerpol Autocentrum - Oferty</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <header>
-        <h1>Amerpol Autocentrum</h1>
-        <nav>
-            <a href="/">Strona główna</a>
-            <a href="#offers">Oferty</a>
-            <a href="/kontakt">Kontakt</a>
-        </nav>
-    </header>
+   <html lang="pl">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>Amerpol Autocentrum - Oferty</title>
+       <link rel="stylesheet" href="style.css">
+   </head>
+   <body>
+       <header>
+           <h1>Amerpol Autocentrum</h1>
+           <nav>
+               <a href="/">Strona główna</a>
+               <a href="#offers">Oferty</a>
+               <a href="/kontakt">Kontakt</a>
+           </nav>
+       </header>
 
-    <section id="offers">
-        <h2>Nasze Oferty</h2>
-        <div id="featured-listings" class="listings-grid"></div>
-        <button id="show-more">Pokaż więcej ofert</button>
+       <section id="offers">
+           <h2>Nasze Oferty</h2>
+           <div id="featured-listings" class="listings-grid"></div>
+           <button id="show-more">Pokaż więcej ofert</button>
 
-        <div id="filter-section" style="display: none;">
-            <h3>Filtruj oferty</h3>
-            <form id="filter-form">
-                <label for="brand">Marka:</label>
-                <select id="brand" name="brand">
-                    <option value="">Wszystkie</option>
-                    <option value="ford">Ford</option>
-                    <option value="toyota">Toyota</option>
-                    <option value="bmw">BMW</option>
-                    <option value="volkswagen">Volkswagen</option>
-                </select>
+           <div id="filter-section" style="display: none;">
+               <h3>Filtruj oferty</h3>
+               <form id="filter-form">
+                   <label for="brand">Marka:</label>
+                   <select id="brand" name="brand">
+                       <option value="">Wszystkie</option>
+                       <option value="ford">Ford</option>
+                       <option value="toyota">Toyota</option>
+                       <option value="bmw">BMW</option>
+                       <option value="volkswagen">Volkswagen</option>
+                   </select>
 
-                <label for="price-min">Cena od:</label>
-                <input type="number" id="price-min" name="price-min" placeholder="0">
+                   <label for="price-min">Cena od:</label>
+                   <input type="number" id="price-min" name="price-min" placeholder="0">
 
-                <label for="price-max">Cena do:</label>
-                <input type="number" id="price-max" name="price-max" placeholder="1000000">
+                   <label for="price-max">Cena do:</label>
+                   <input type="number" id="price-max" name="price-max" placeholder="1000000">
 
-                <label for="year">Rok od:</label>
-                <input type="number" id="year" name="year" placeholder="2000">
+                   <label for="year">Rok od:</label>
+                   <input type="number" id="year" name="year" placeholder="2000">
 
-                <button type="submit">Filtruj</button>
-            </form>
-            <div id="filtered-listings" class="listings-grid"></div>
-        </div>
-    </section>
+                   <button type="submit">Filtruj</button>
+               </form>
+               <div id="filtered-listings" class="listings-grid"></div>
+           </div>
+       </section>
 
-    <script src="script.js"></script>
-</body>
-</html>
+       <script src="script.js"></script>
+   </body>
+   </html>
