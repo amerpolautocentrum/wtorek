@@ -1,3 +1,7 @@
+// Plik offers.js – dynamiczne filtrowanie danych ofert
+
+let allOffers = [];
+
 async function fetchOffersWithFilters(filters = {}) {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
@@ -7,7 +11,8 @@ async function fetchOffersWithFilters(filters = {}) {
     });
 
     const result = await response.json();
-    return result.full || [];
+    allOffers = result.full || [];
+    return allOffers;
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
     return [];
@@ -53,43 +58,70 @@ function displayOffers(offers) {
   });
 }
 
-function populateFilters(offers) {
-  const years = [...new Set(offers.map(o => parseInt(o.data?.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
-  const prices = offers.map(o => parseInt(o.data?.price)).filter(Boolean).sort((a, b) => a - b);
-  const makes = [...new Set(offers.map(o => o.data?.id_make).filter(Boolean))].sort();
-  const models = [...new Set(offers.map(o => o.data?.id_model).filter(Boolean))].sort();
+function updateFilters() {
+  const brandSelect = document.getElementById("brand");
+  const modelSelect = document.getElementById("model");
+  const yearFromSelect = document.getElementById("yearFrom");
+  const yearToSelect = document.getElementById("yearTo");
+  const priceMinSelect = document.getElementById("priceMin");
+  const priceMaxSelect = document.getElementById("priceMax");
 
-  const fillSelect = (id, values, label) => {
-    const select = document.getElementById(id);
-    if (!select) return;
-    select.innerHTML = `<option value="">${label}</option>`;
-    values.forEach(v => {
-      const option = document.createElement("option");
-      option.value = v;
-      option.textContent = v;
-      select.appendChild(option);
-    });
-  };
+  const selectedBrand = brandSelect.value;
+  const filtered = selectedBrand ? allOffers.filter(o => o.data?.id_make === selectedBrand) : allOffers;
 
-  fillSelect("brand", makes, "Wybierz markę");
-  fillSelect("model", models, "Wybierz model");
-  fillSelect("yearFrom", years, "Rocznik od");
-  fillSelect("yearTo", years.slice().reverse(), "Rocznik do");
-  fillSelect("priceMin", prices, "Cena min");
-  fillSelect("priceMax", prices.slice().reverse(), "Cena max");
+  const unique = (arr, key) => [...new Set(arr.map(o => o.data?.[key]).filter(Boolean))].sort();
+
+  // Modele
+  modelSelect.innerHTML = '<option value="">Wybierz model</option>';
+  unique(filtered, 'id_model').forEach(v => {
+    modelSelect.innerHTML += `<option value="${v}">${v}</option>`;
+  });
+
+  // Roczniki
+  yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
+  yearToSelect.innerHTML = '<option value="">Rocznik do</option>';
+  const years = unique(filtered, 'yearproduction');
+  years.forEach(y => {
+    yearFromSelect.innerHTML += `<option value="${y}">${y}</option>`;
+    yearToSelect.innerHTML += `<option value="${y}">${y}</option>`;
+  });
+
+  // Ceny
+  priceMinSelect.innerHTML = '<option value="">Cena min</option>';
+  priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
+  const prices = unique(filtered, 'price');
+  prices.forEach(p => {
+    priceMinSelect.innerHTML += `<option value="${p}">${p}</option>`;
+    priceMaxSelect.innerHTML += `<option value="${p}">${p}</option>`;
+  });
 }
 
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchOffersWithFilters(filters);
-  displayOffers(offers);
+  const offers = allOffers.filter(o => {
+    const d = o.data || {};
+    return (!filters.id_make || d.id_make === filters.id_make) &&
+           (!filters.id_model || d.id_model === filters.id_model) &&
+           (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
+           (!filters.yearproduction_to || parseInt(d.yearproduction) <= parseInt(filters.yearproduction_to)) &&
+           (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
+           (!filters.price_max || parseInt(d.price) <= parseInt(filters.price_max));
+  });
+  displayOffers(offers.slice(0, 6));
 }
 
-document.getElementById("filter-button")?.addEventListener("click", filterOffers);
-
 (async () => {
-  const allOffers = await fetchOffersWithFilters();
-  populateFilters(allOffers);
-  const shuffled = allOffers.sort(() => 0.5 - Math.random());
-  displayOffers(shuffled.slice(0, 6));
+  const offers = await fetchOffersWithFilters();
+  displayOffers(offers.slice(0, 6));
+
+  // Marki
+  const brandSelect = document.getElementById("brand");
+  const brands = [...new Set(allOffers.map(o => o.data?.id_make).filter(Boolean))].sort();
+  brands.forEach(b => {
+    brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
+  });
+
+  brandSelect.addEventListener("change", updateFilters);
 })();
+
+document.getElementById("filter-button")?.addEventListener("click", filterOffers);
