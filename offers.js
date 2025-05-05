@@ -1,9 +1,10 @@
+// Wersja debugująca displayOffers — pokazuje dane JSON w przeglądarce
+
+const apiUrl = "https://api-offers.vercel.app/api/offers";
 
 async function fetchOffers(offset = 0, limit = 8, filters = {}) {
-    let url = "https://api-offers.vercel.app/api/offers";
-
     try {
-        const response = await fetch(url, {
+        const response = await fetch(apiUrl, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({})
@@ -11,7 +12,6 @@ async function fetchOffers(offset = 0, limit = 8, filters = {}) {
 
         const result = await response.json();
         const offers = result.full || [];
-
         return offers.slice(offset, offset + limit);
     } catch (error) {
         console.error("Błąd pobierania ofert:", error);
@@ -31,25 +31,7 @@ async function loadInitialOffers() {
 
 function displayOffers(offers) {
     const container = document.getElementById("offers-container");
-    container.innerHTML = "";
-
-    offers.forEach(offer => {
-        const d = offer.data || {};
-        const div = document.createElement("div");
-        div.className = "offer-item";
-        div.innerHTML = `
-            <h2>${d.id_make || ''} ${d.id_model || ''}</h2>
-            <img src="${d.mainimage || ''}" alt="miniatura auta" width="200">
-            <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
-            <p>Cena: ${d.price || 'brak'} PLN</p>
-        `;
-        if (offer.id) {
-            div.addEventListener("click", () => {
-                window.open("https://oferta.amer-pol.com/oferta/" + offer.id, "_blank");
-            });
-        }
-        container.appendChild(div);
-    });
+    container.innerHTML = `<pre>${JSON.stringify(offers, null, 2)}</pre>`;
 }
 
 function populateFiltersFromApi(offers) {
