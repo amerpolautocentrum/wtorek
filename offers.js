@@ -1,33 +1,60 @@
-// Plik offers.js – dynamiczne filtrowanie danych ofert
+// Nowy plik offers.js z poprawioną logiką filtrów
 
 let allOffers = [];
 
-async function fetchOffersWithFilters(filters = {}) {
+async function fetchAllOffers() {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filters })
+      body: JSON.stringify({})
     });
 
     const result = await response.json();
-    allOffers = result.full || [];
-    return allOffers;
+    return result.full || [];
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
     return [];
   }
 }
 
-function collectFilters() {
-  return {
-    id_make: document.getElementById("brand")?.value || undefined,
-    id_model: document.getElementById("model")?.value || undefined,
-    yearproduction_from: document.getElementById("yearFrom")?.value || undefined,
-    yearproduction_to: document.getElementById("yearTo")?.value || undefined,
-    price_min: document.getElementById("priceMin")?.value || undefined,
-    price_max: document.getElementById("priceMax")?.value || undefined
-  };
+function getUniqueSorted(values) {
+  return [...new Set(values)].filter(Boolean).sort();
+}
+
+function populateFilters(offers) {
+  const brandSelect = document.getElementById("brand");
+  const modelSelect = document.getElementById("model");
+  const yearFrom = document.getElementById("yearFrom");
+  const yearTo = document.getElementById("yearTo");
+  const priceMin = document.getElementById("priceMin");
+  const priceMax = document.getElementById("priceMax");
+
+  const brands = getUniqueSorted(offers.map(o => o.data?.id_make));
+  brandSelect.innerHTML = '<option value="">Wybierz markę</option>' + brands.map(b => `<option value="${b}">${b}</option>`).join("");
+
+  brandSelect.addEventListener("change", () => updateModelFilter(offers));
+
+  updateModelFilter(offers);
+
+  const years = getUniqueSorted(offers.map(o => o.data?.yearproduction));
+  yearFrom.innerHTML = '<option value="">Rocznik od</option>' + years.map(y => `<option value="${y}">${y}</option>`).join("");
+  yearTo.innerHTML = '<option value="">Rocznik do</option>' + years.map(y => `<option value="${y}">${y}</option>`).join("");
+
+  const prices = getUniqueSorted(offers.map(o => parseInt(o.data?.price)).filter(p => !isNaN(p)));
+  priceMin.innerHTML = '<option value="">Cena min</option>' + prices.map(p => `<option value="${p}">${p}</option>`).join("");
+  priceMax.innerHTML = '<option value="">Cena max</option>' + prices.map(p => `<option value="${p}">${p}</option>`).join("");
+}
+
+function updateModelFilter(offers) {
+  const selectedBrand = document.getElementById("brand").value;
+  const modelSelect = document.getElementById("model");
+
+  const models = getUniqueSorted(offers
+    .filter(o => !selectedBrand || o.data?.id_make === selectedBrand)
+    .map(o => o.data?.id_model));
+
+  modelSelect.innerHTML = '<option value="">Wybierz model</option>' + models.map(m => `<option value="${m}">${m}</option>`).join("");
 }
 
 function displayOffers(offers) {
@@ -58,70 +85,42 @@ function displayOffers(offers) {
   });
 }
 
-function updateFilters() {
-  const brandSelect = document.getElementById("brand");
-  const modelSelect = document.getElementById("model");
-  const yearFromSelect = document.getElementById("yearFrom");
-  const yearToSelect = document.getElementById("yearTo");
-  const priceMinSelect = document.getElementById("priceMin");
-  const priceMaxSelect = document.getElementById("priceMax");
-
-  const selectedBrand = brandSelect.value;
-  const filtered = selectedBrand ? allOffers.filter(o => o.data?.id_make === selectedBrand) : allOffers;
-
-  const unique = (arr, key) => [...new Set(arr.map(o => o.data?.[key]).filter(Boolean))].sort();
-
-  // Modele
-  modelSelect.innerHTML = '<option value="">Wybierz model</option>';
-  unique(filtered, 'id_model').forEach(v => {
-    modelSelect.innerHTML += `<option value="${v}">${v}</option>`;
-  });
-
-  // Roczniki
-  yearFromSelect.innerHTML = '<option value="">Rocznik od</option>';
-  yearToSelect.innerHTML = '<option value="">Rocznik do</option>';
-  const years = unique(filtered, 'yearproduction');
-  years.forEach(y => {
-    yearFromSelect.innerHTML += `<option value="${y}">${y}</option>`;
-    yearToSelect.innerHTML += `<option value="${y}">${y}</option>`;
-  });
-
-  // Ceny
-  priceMinSelect.innerHTML = '<option value="">Cena min</option>';
-  priceMaxSelect.innerHTML = '<option value="">Cena max</option>';
-  const prices = unique(filtered, 'price');
-  prices.forEach(p => {
-    priceMinSelect.innerHTML += `<option value="${p}">${p}</option>`;
-    priceMaxSelect.innerHTML += `<option value="${p}">${p}</option>`;
-  });
+function collectFilters() {
+  return {
+    brand: document.getElementById("brand").value,
+    model: document.getElementById("model").value,
+    yearFrom: document.getElementById("yearFrom").value,
+    yearTo: document.getElementById("yearTo").value,
+    priceMin: document.getElementById("priceMin").value,
+    priceMax: document.getElementById("priceMax").value
+  };
 }
 
-async function filterOffers() {
-  const filters = collectFilters();
-  const offers = allOffers.filter(o => {
+function applyFilters(offers, filters) {
+  return offers.filter(o => {
     const d = o.data || {};
-    return (!filters.id_make || d.id_make === filters.id_make) &&
-           (!filters.id_model || d.id_model === filters.id_model) &&
-           (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
-           (!filters.yearproduction_to || parseInt(d.yearproduction) <= parseInt(filters.yearproduction_to)) &&
-           (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
-           (!filters.price_max || parseInt(d.price) <= parseInt(filters.price_max));
+    return (!filters.brand || d.id_make === filters.brand)
+      && (!filters.model || d.id_model === filters.model)
+      && (!filters.yearFrom || parseInt(d.yearproduction) >= parseInt(filters.yearFrom))
+      && (!filters.yearTo || parseInt(d.yearproduction) <= parseInt(filters.yearTo))
+      && (!filters.priceMin || parseInt(d.price) >= parseInt(filters.priceMin))
+      && (!filters.priceMax || parseInt(d.price) <= parseInt(filters.priceMax));
   });
-  displayOffers(offers.slice(0, 6));
 }
 
-(async () => {
-  const offers = await fetchOffersWithFilters();
-  displayOffers(offers.slice(0, 6));
+async function start() {
+  allOffers = await fetchAllOffers();
+  populateFilters(allOffers);
+  displayOffers(shuffleArray(allOffers).slice(0, 6));
 
-  // Marki
-  const brandSelect = document.getElementById("brand");
-  const brands = [...new Set(allOffers.map(o => o.data?.id_make).filter(Boolean))].sort();
-  brands.forEach(b => {
-    brandSelect.innerHTML += `<option value="${b}">${b}</option>`;
+  document.getElementById("filter-button").addEventListener("click", () => {
+    const filtered = applyFilters(allOffers, collectFilters());
+    displayOffers(filtered);
   });
+}
 
-  brandSelect.addEventListener("change", updateFilters);
-})();
+function shuffleArray(arr) {
+  return arr.map(a => [Math.random(), a]).sort().map(a => a[1]);
+}
 
-document.getElementById("filter-button")?.addEventListener("click", filterOffers);
+start();
