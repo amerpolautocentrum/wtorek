@@ -1,12 +1,15 @@
-// Plik offers.js do głównego repozytorium – ładowanie ogłoszeń i filtrowanie po marce
+// Plik offers.js – główne repozytorium, ładowanie ogłoszeń i filtrów
 
 async function fetchOffers() {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({})
     });
+
     const result = await response.json();
     return result.full || [];
   } catch (error) {
@@ -43,33 +46,35 @@ function displayOffers(offers) {
   });
 }
 
-function populateBrandFilter(offers) {
-  const brandSelect = document.getElementById("brand");
-  if (!brandSelect) return;
-  const brands = [...new Set(offers.map(o => o.data?.id_make).filter(Boolean))].sort();
-  brandSelect.innerHTML = '<option value="">Wybierz markę</option>';
-  brands.forEach(brand => {
-    const option = document.createElement("option");
-    option.value = brand;
-    option.textContent = brand;
-    brandSelect.appendChild(option);
-  });
-}
+function populateFilters(offers) {
+  const makes = [...new Set(offers.map(o => o.data?.id_make).filter(Boolean))].sort();
+  const models = [...new Set(offers.map(o => o.data?.id_model).filter(Boolean))].sort();
+  const years = [...new Set(offers.map(o => parseInt(o.data?.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
+  const prices = offers.map(o => parseInt(o.data?.price)).filter(Boolean).sort((a, b) => a - b);
 
-function applyBrandFilter(offers) {
-  const selectedBrand = document.getElementById("brand")?.value;
-  const filtered = selectedBrand ? offers.filter(o => o.data?.id_make === selectedBrand) : offers;
-  displayOffers(filtered.slice(0, 6));
-}
+  const fill = (id, values, label) => {
+    const select = document.getElementById(id);
+    if (!select) return;
+    select.innerHTML = `<option value="">${label}</option>`;
+    values.forEach(val => {
+      const option = document.createElement("option");
+      option.value = val;
+      option.textContent = val;
+      select.appendChild(option);
+    });
+  };
 
-document.getElementById("brand")?.addEventListener("change", async () => {
-  const offers = await fetchOffers();
-  applyBrandFilter(offers);
-});
+  fill("brand", makes, "Wybierz markę");
+  fill("model", models, "Wybierz model");
+  fill("yearFrom", years, "Rocznik od");
+  fill("yearTo", years.slice().reverse(), "Rocznik do");
+  fill("priceMin", prices, "Cena min");
+  fill("priceMax", prices.slice().reverse(), "Cena max");
+}
 
 (async () => {
   const offers = await fetchOffers();
-  populateBrandFilter(offers);
-  const shuffled = offers.sort(() => 0.5 - Math.random());
-  displayOffers(shuffled.slice(0, 6));
+  populateFilters(offers);
+  const random = offers.sort(() => 0.5 - Math.random()).slice(0, 6);
+  displayOffers(random);
 })();
