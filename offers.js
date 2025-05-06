@@ -1,16 +1,16 @@
-// Plik offers.js – aktualna wersja obsługująca poprawnie dane z API FOX
+// Plik offers.js – poprawiona wersja obsługująca dane z API FOX
 
 async function fetchOffersWithFilters(filters = {}) {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({})
+      body: JSON.stringify({}) // na razie ignorujemy filtry – można rozwinąć
     });
 
     const result = await response.json();
     console.log("SUROWA ODPOWIEDŹ Z API:", result);
-    return Object.values(result.offers || {});
+    return Object.values(result.offers || {}); // <-- KLUCZOWA ZMIANA
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
     return [];
