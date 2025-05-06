@@ -1,21 +1,29 @@
-// Plik offers.js – główne repozytorium, ładowanie ogłoszeń i filtrów
-
-async function fetchOffers() {
+async function fetchOffersWithFilters(filters = {}) {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({})
     });
 
     const result = await response.json();
-    return result.full || [];
+    console.log("SUROWA ODPOWIEDŹ Z API:", result); // DODANE
+    return result.full || []; // Możemy to zmienić na result.offers jeśli się okaże, że tak się nazywa
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
     return [];
   }
+}
+
+function collectFilters() {
+  return {
+    id_make: document.getElementById("brand")?.value || undefined,
+    id_model: document.getElementById("model")?.value || undefined,
+    yearproduction_from: document.getElementById("yearFrom")?.value || undefined,
+    yearproduction_to: document.getElementById("yearTo")?.value || undefined,
+    price_min: document.getElementById("priceMin")?.value || undefined,
+    price_max: document.getElementById("priceMax")?.value || undefined
+  };
 }
 
 function displayOffers(offers) {
@@ -47,34 +55,43 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-  const makes = [...new Set(offers.map(o => o.data?.id_make).filter(Boolean))].sort();
-  const models = [...new Set(offers.map(o => o.data?.id_model).filter(Boolean))].sort();
   const years = [...new Set(offers.map(o => parseInt(o.data?.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
   const prices = offers.map(o => parseInt(o.data?.price)).filter(Boolean).sort((a, b) => a - b);
+  const makes = [...new Set(offers.map(o => o.data?.id_make).filter(Boolean))].sort();
+  const models = [...new Set(offers.map(o => o.data?.id_model).filter(Boolean))].sort();
 
-  const fill = (id, values, label) => {
+  const fillSelect = (id, values, label) => {
     const select = document.getElementById(id);
     if (!select) return;
     select.innerHTML = `<option value="">${label}</option>`;
-    values.forEach(val => {
+    values.forEach(v => {
       const option = document.createElement("option");
-      option.value = val;
-      option.textContent = val;
+      option.value = v;
+      option.textContent = v;
       select.appendChild(option);
     });
   };
 
-  fill("brand", makes, "Wybierz markę");
-  fill("model", models, "Wybierz model");
-  fill("yearFrom", years, "Rocznik od");
-  fill("yearTo", years.slice().reverse(), "Rocznik do");
-  fill("priceMin", prices, "Cena min");
-  fill("priceMax", prices.slice().reverse(), "Cena max");
+  fillSelect("brand", makes, "Wybierz markę");
+  fillSelect("model", models, "Wybierz model");
+  fillSelect("yearFrom", years, "Rocznik od");
+  fillSelect("yearTo", years.slice().reverse(), "Rocznik do");
+  fillSelect("priceMin", prices, "Cena min");
+  fillSelect("priceMax", prices.slice().reverse(), "Cena max");
 }
 
+async function filterOffers() {
+  const filters = collectFilters();
+  const offers = await fetchOffersWithFilters(filters);
+  displayOffers(offers);
+}
+
+document.getElementById("filter-button")?.addEventListener("click", filterOffers);
+
 (async () => {
-  const offers = await fetchOffers();
-  populateFilters(offers);
-  const random = offers.sort(() => 0.5 - Math.random()).slice(0, 6);
-  displayOffers(random);
+  const allOffers = await fetchOffersWithFilters();
+  console.log("ODPOWIEDŹ Z API:", allOffers); // ← KLUCZOWA LINIA
+  populateFilters(allOffers);
+  const shuffled = allOffers.sort(() => 0.5 - Math.random());
+  displayOffers(shuffled.slice(0, 6));
 })();
