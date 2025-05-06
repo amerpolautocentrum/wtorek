@@ -1,3 +1,5 @@
+// Plik offers.js – aktualna wersja obsługująca poprawnie dane z API FOX
+
 async function fetchOffersWithFilters(filters = {}) {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
@@ -7,8 +9,8 @@ async function fetchOffersWithFilters(filters = {}) {
     });
 
     const result = await response.json();
-    console.log("SUROWA ODPOWIEDŹ Z API:", result); // DODANE
-    return result.full || []; // Możemy to zmienić na result.offers jeśli się okaże, że tak się nazywa
+    console.log("SUROWA ODPOWIEDŹ Z API:", result);
+    return Object.values(result.offers || {});
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
     return [];
@@ -90,7 +92,6 @@ document.getElementById("filter-button")?.addEventListener("click", filterOffers
 
 (async () => {
   const allOffers = await fetchOffersWithFilters();
-  console.log("ODPOWIEDŹ Z API:", allOffers); // ← KLUCZOWA LINIA
   populateFilters(allOffers);
   const shuffled = allOffers.sort(() => 0.5 - Math.random());
   displayOffers(shuffled.slice(0, 6));
