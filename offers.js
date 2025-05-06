@@ -1,25 +1,21 @@
-// Plik offers.js – z pełnym pobieraniem danych z FOX API i poprawionym filtrowaniem
+// Plik offers.js – poprawione przetwarzanie odpowiedzi z API (object → array)
 
-async function fetchAllOffers(pagesToFetch = 7) {
-  let allOffers = [];
+async function fetchOffersWithFilters(filters = {}) {
+  try {
+    const response = await fetch("https://api-offers.vercel.app/api/offers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filters })
+    });
 
-  for (let page = 1; page <= pagesToFetch; page++) {
-    try {
-      const response = await fetch("https://api-offers.vercel.app/api/offers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ page })
-      });
+    const result = await response.json();
+    console.log("ODPOWIEDŹ Z API:", result);
 
-      const result = await response.json();
-      const offersPage = Object.values(result.offers || {});
-      allOffers = allOffers.concat(offersPage);
-    } catch (error) {
-      console.error("Błąd pobierania strony ofert:", error);
-    }
+    return Object.values(result.offers || {}); // <-- Konwersja z obiektu na tablicę
+  } catch (error) {
+    console.error("Błąd pobierania ofert:", error);
+    return [];
   }
-
-  return allOffers;
 }
 
 function collectFilters() {
@@ -42,21 +38,21 @@ function displayOffers(offers) {
     return;
   }
 
-  offers.forEach(offer => {
-    const d = offer.data || {};
-    const url = offer.url || `https://oferta.amer-pol.com/oferta/${offer.id}`;
+  offers.forEach(o => {
+    const d = o.data || {};
     const div = document.createElement("div");
     div.className = "offer-item";
     div.innerHTML = `
-      <h2>${d.id_make || "Marka"} ${d.id_model || ""}</h2>
-      <img src="${d.mainimage || 'https://via.placeholder.com/200'}" alt="Zdjęcie auta" width="200">
-      <p>${d.yearproduction || "?"} • ${d.power || "?"} KM • ${d.mileage || "?"} km</p>
-      <p>${d.fueltype || ""} • ${d.color || ""}</p>
-      <p><strong>Cena:</strong> ${d.price || 'brak'} PLN</p>
+      <h2>${d.id_make || ''} ${d.id_model || ''}</h2>
+      <img src="${d.mainimage || 'https://via.placeholder.com/200'}" alt="miniatura auta" width="200">
+      <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
+      <p>Cena: ${d.price || 'brak'} PLN</p>
     `;
-    div.addEventListener("click", () => {
-      window.open(url, "_blank");
-    });
+    if (o.id) {
+      div.addEventListener("click", () => {
+        window.open("https://oferta.amer-pol.com/oferta/" + o.id, "_blank");
+      });
+    }
     container.appendChild(div);
   });
 }
@@ -91,24 +87,14 @@ function populateFilters(offers) {
 
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchAllOffers();
-  const filtered = offers.filter(o => {
-    const d = o.data || {};
-    const normalize = v => v?.toString().trim().toUpperCase();
-    return (!filters.id_make || normalize(d.id_make) === normalize(filters.id_make)) &&
-           (!filters.id_model || normalize(d.id_model) === normalize(filters.id_model)) &&
-           (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
-           (!filters.yearproduction_to || parseInt(d.yearproduction) <= parseInt(filters.yearproduction_to)) &&
-           (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
-           (!filters.price_max || parseInt(d.price) <= parseInt(filters.price_max));
-  });
-  displayOffers(filtered);
+  const offers = await fetchOffersWithFilters(filters);
+  displayOffers(offers);
 }
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
 
 (async () => {
-  const allOffers = await fetchAllOffers();
+  const allOffers = await fetchOffersWithFilters();
   populateFilters(allOffers);
   const shuffled = allOffers.sort(() => 0.5 - Math.random());
   displayOffers(shuffled.slice(0, 6));
