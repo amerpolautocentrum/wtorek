@@ -1,16 +1,14 @@
-// Plik offers.js – poprawiona wersja obsługująca dane z API FOX
-
 async function fetchOffersWithFilters(filters = {}) {
   try {
     const response = await fetch("https://api-offers.vercel.app/api/offers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}) // na razie ignorujemy filtry – można rozwinąć
+      body: JSON.stringify({})
     });
 
     const result = await response.json();
     console.log("SUROWA ODPOWIEDŹ Z API:", result);
-    return Object.values(result.offers || {}); // <-- KLUCZOWA ZMIANA
+    return Object.values(result.offers || {});
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
     return [];
@@ -38,14 +36,13 @@ function displayOffers(offers) {
   }
 
   offers.forEach(o => {
-    const d = o.data || {};
     const div = document.createElement("div");
     div.className = "offer-item";
     div.innerHTML = `
-      <h2>${d.id_make || ''} ${d.id_model || ''}</h2>
-      <img src="${d.mainimage || ''}" alt="miniatura auta" width="200">
-      <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
-      <p>Cena: ${d.price || 'brak'} PLN</p>
+      <h2>${o.id_make || ''} ${o.id_model || ''}</h2>
+      <img src="${o.mainimage || ''}" alt="miniatura auta" width="200">
+      <p>${o.yearproduction || ''} • ${o.power || ''} KM • ${o.mileage || ''} km</p>
+      <p>Cena: ${o.price || 'brak'} PLN</p>
     `;
     if (o.id) {
       div.addEventListener("click", () => {
@@ -57,10 +54,10 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-  const years = [...new Set(offers.map(o => parseInt(o.data?.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
-  const prices = offers.map(o => parseInt(o.data?.price)).filter(Boolean).sort((a, b) => a - b);
-  const makes = [...new Set(offers.map(o => o.data?.id_make).filter(Boolean))].sort();
-  const models = [...new Set(offers.map(o => o.data?.id_model).filter(Boolean))].sort();
+  const years = [...new Set(offers.map(o => parseInt(o.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
+  const prices = offers.map(o => parseInt(o.price)).filter(Boolean).sort((a, b) => a - b);
+  const makes = [...new Set(offers.map(o => o.id_make).filter(Boolean))].sort();
+  const models = [...new Set(offers.map(o => o.id_model).filter(Boolean))].sort();
 
   const fillSelect = (id, values, label) => {
     const select = document.getElementById(id);
@@ -84,8 +81,8 @@ function populateFilters(offers) {
 
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchOffersWithFilters(filters);
-  displayOffers(offers);
+  const allOffers = await fetchOffersWithFilters(filters);
+  displayOffers(allOffers);
 }
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
