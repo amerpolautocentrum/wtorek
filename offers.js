@@ -1,21 +1,25 @@
-// Plik offers.js – poprawione przetwarzanie odpowiedzi z API (object → array)
+// Plik offers.js – z poprawionym filtrowaniem i obsługą odpowiedzi z FOX API
 
-async function fetchOffersWithFilters(filters = {}) {
-  try {
-    const response = await fetch("https://api-offers.vercel.app/api/offers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filters })
-    });
+async function fetchAllOffers(pagesToFetch = 7) {
+  let allOffers = [];
 
-    const result = await response.json();
-    console.log("ODPOWIEDŹ Z API:", result);
+  for (let page = 1; page <= pagesToFetch; page++) {
+    try {
+      const response = await fetch("https://api-offers.vercel.app/api/offers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ page })
+      });
 
-    return Object.values(result.offers || {}); // <-- Konwersja z obiektu na tablicę
-  } catch (error) {
-    console.error("Błąd pobierania ofert:", error);
-    return [];
+      const result = await response.json();
+      const offersPage = Object.values(result.offers || {}); // zamiana obiektu na tablicę
+      allOffers = allOffers.concat(offersPage);
+    } catch (error) {
+      console.error("Błąd pobierania strony ofert:", error);
+    }
   }
+
+  return allOffers;
 }
 
 function collectFilters() {
@@ -87,14 +91,23 @@ function populateFilters(offers) {
 
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchOffersWithFilters(filters);
-  displayOffers(offers);
+  const offers = await fetchAllOffers();
+  const filtered = offers.filter(o => {
+    const d = o.data || {};
+    return (!filters.id_make || d.id_make?.toUpperCase() === filters.id_make?.toUpperCase()) &&
+           (!filters.id_model || d.id_model?.toUpperCase() === filters.id_model?.toUpperCase()) &&
+           (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
+           (!filters.yearproduction_to || parseInt(d.yearproduction) <= parseInt(filters.yearproduction_to)) &&
+           (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
+           (!filters.price_max || parseInt(d.price) <= parseInt(filters.price_max));
+  });
+  displayOffers(filtered);
 }
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
 
 (async () => {
-  const allOffers = await fetchOffersWithFilters();
+  const allOffers = await fetchAllOffers();
   populateFilters(allOffers);
   const shuffled = allOffers.sort(() => 0.5 - Math.random());
   displayOffers(shuffled.slice(0, 6));
