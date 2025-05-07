@@ -24,10 +24,16 @@ function populateDynamicFilters(offers, selectedBrand = null) {
   const years = new Set();
   const prices = [];
 
+  const debugModels = [];
+
   offers.forEach(o => {
     const d = o;
 
     if (!selectedBrand || d.id_make?.toLowerCase() === selectedBrand.toLowerCase()) {
+      if (selectedBrand && d.id_make?.toLowerCase() === selectedBrand.toLowerCase()) {
+        debugModels.push(d); // zbieramy oferty do sprawdzenia
+      }
+
       if (d.id_model && typeof d.id_model === "string") {
         models.add(d.id_model);
       }
@@ -41,6 +47,8 @@ function populateDynamicFilters(offers, selectedBrand = null) {
 
   if (selectedBrand) {
     console.log(`🔍 Modele dla marki ${selectedBrand}:`, sortedModels);
+    console.log(`📦 Oferty marki ${selectedBrand} – pierwsze 3:`);
+    console.log(debugModels.slice(0, 3));
   }
 
   const sortedYears = [...years].sort((a, b) => a - b);
