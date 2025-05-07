@@ -2,12 +2,16 @@
 function fillSelect(id, values, label) {
   const select = document.getElementById(id);
   if (!select) return;
+
   select.innerHTML = `<option value="">${label}</option>`;
-  values.forEach(v => {
-    if (typeof v === "string") {
+
+  (values || []).forEach(v => {
+    if (typeof v === "string" || typeof v === "number") {
       const option = document.createElement("option");
       option.value = v;
-      option.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+      option.textContent = typeof v === "string"
+        ? v.charAt(0).toUpperCase() + v.slice(1)
+        : v;
       select.appendChild(option);
     }
   });
