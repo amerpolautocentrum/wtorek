@@ -1,3 +1,4 @@
+
 function fillSelect(id, values, label) {
   const select = document.getElementById(id);
   if (!select) return;
@@ -49,4 +50,77 @@ function collectFilters() {
     id_make: document.getElementById("brand")?.value || undefined,
     id_model: document.getElementById("model")?.value || undefined,
     yearproduction_from: document.getElementById("yearFrom")?.value || undefined,
-    yearproduction_to: document.getElement_
+    yearproduction_to: document.getElementById("yearTo")?.value || undefined,
+    price_min: document.getElementById("priceMin")?.value || undefined,
+    price_max: document.getElementById("priceMax")?.value || undefined
+  };
+}
+
+async function fetchFilteredOffers(filters = {}) {
+  try {
+    const response = await fetch("https://api-offers.vercel.app/api/offers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filters })
+    });
+    const result = await response.json();
+    return Object.values(result.offers || {});
+  } catch (error) {
+    console.error("Błąd pobierania ofert:", error);
+    return [];
+  }
+}
+
+function displayOffers(offers) {
+  const container = document.getElementById("offers-container");
+  container.innerHTML = "";
+
+  if (!offers.length) {
+    container.innerHTML = "<p>Brak ofert do wyświetlenia.</p>";
+    return;
+  }
+
+  offers.forEach(o => {
+    const d = o.data || o;
+    const div = document.createElement("div");
+    div.className = "offer-item";
+
+    const title = `${d.id_make || ''} ${d.id_model || ''}`;
+    const imageSrc = d.mainimage?.[0]?.source || 'https://via.placeholder.com/200';
+    const imageAlt = `Miniatura auta ${title}`;
+    const year = d.yearproduction || '';
+    const power = d.power || '';
+    const mileage = d.mileage || '';
+    const price = d.price || 'brak';
+
+    div.innerHTML = `
+      <h2>${title}</h2>
+      <img src="${imageSrc}" alt="${imageAlt}" width="200">
+      <p>${year} • ${power} KM • ${mileage} km</p>
+      <p>Cena: ${price} PLN</p>
+    `;
+
+    if (o.id) {
+      div.addEventListener("click", () => {
+        window.open("https://oferta.amer-pol.com/m/komis-offer/index/" + o.id, "_blank");
+      });
+    }
+
+    container.appendChild(div);
+  });
+}
+
+async function filterOffers() {
+  const filters = collectFilters();
+  const offers = await fetchFilteredOffers(filters);
+  populateDynamicFilters(offers);
+  displayOffers(offers);
+}
+
+document.getElementById("filter-button")?.addEventListener("click", filterOffers);
+
+// Inicjalizacja – załaduj wszystko od razu
+(async function init() {
+  const allOffers = await fetchFilteredOffers();
+  populateDynamicFilters(allOffers);
+})();
