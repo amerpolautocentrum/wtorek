@@ -4,10 +4,12 @@ function fillSelect(id, values, label) {
   if (!select) return;
   select.innerHTML = `<option value="">${label}</option>`;
   values.forEach(v => {
-    const option = document.createElement("option");
-    option.value = v;
-    option.textContent = v.charAt(0).toUpperCase() + v.slice(1);
-    select.appendChild(option);
+    if (typeof v === "string") {
+      const option = document.createElement("option");
+      option.value = v;
+      option.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+      select.appendChild(option);
+    }
   });
 }
 
@@ -19,8 +21,15 @@ function populateDynamicFilters(offers) {
 
   offers.forEach(o => {
     const d = o.data || o;
-    if (d.id_make) brands.add(d.id_make.toLowerCase());
-    if (d.id_model) models.add(d.id_model);
+
+    if (d.id_make && typeof d.id_make === "string") {
+      brands.add(d.id_make.toLowerCase());
+    }
+
+    if (d.id_model && typeof d.id_model === "string") {
+      models.add(d.id_model);
+    }
+
     if (d.yearproduction) years.add(parseInt(d.yearproduction));
     if (d.price) prices.push(parseFloat(d.price));
   });
@@ -119,7 +128,6 @@ async function filterOffers() {
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
 
-// Inicjalizacja – załaduj wszystko od razu
 (async function init() {
   const allOffers = await fetchFilteredOffers();
   populateDynamicFilters(allOffers);
