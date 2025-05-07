@@ -17,16 +17,20 @@ function fillSelect(id, values, label) {
   });
 }
 
-function populateDynamicFilters(offers) {
+let offersCache = [];
+
+function populateDynamicFilters(offers, selectedBrand = null) {
   const models = new Set();
   const years = new Set();
   const prices = [];
 
   offers.forEach(o => {
-    const d = o.data || o;
+    const d = o;
 
-    if (d.id_model && typeof d.id_model === "string") {
-      models.add(d.id_model);
+    if (!selectedBrand || d.id_make?.toLowerCase() === selectedBrand.toLowerCase()) {
+      if (d.id_model && typeof d.id_model === "string") {
+        models.add(d.id_model);
+      }
     }
 
     if (d.yearproduction) years.add(parseInt(d.yearproduction));
@@ -87,7 +91,7 @@ function displayOffers(offers) {
   }
 
   offers.forEach(o => {
-    const d = o.data || o;
+    const d = o;
     const div = document.createElement("div");
     div.className = "offer-item";
 
@@ -132,16 +136,20 @@ async function fetchBrands() {
 async function filterOffers() {
   const filters = collectFilters();
   const offers = await fetchFilteredOffers(filters);
-  populateDynamicFilters(offers);
+  populateDynamicFilters(offers, filters.id_make);
   displayOffers(offers);
 }
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
+document.getElementById("brand")?.addEventListener("change", () => {
+  const selectedBrand = document.getElementById("brand")?.value;
+  populateDynamicFilters(offersCache, selectedBrand);
+});
 
 (async function init() {
   const brands = await fetchBrands();
   fillSelect("brand", brands, "Wybierz markę");
 
-  const offers = await fetchFilteredOffers();
-  populateDynamicFilters(offers);
+  offersCache = await fetchFilteredOffers();
+  populateDynamicFilters(offersCache);
 })();
