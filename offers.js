@@ -1,5 +1,3 @@
-// Plik offers.js – wszystko dynamicznie: marki, modele, roczniki, ceny
-
 function fillSelect(id, values, label) {
   const select = document.getElementById(id);
   if (!select) return;
@@ -52,6 +50,4 @@ function collectFilters() {
     id_model: document.getElementById("model")?.value || undefined,
     yearproduction_from: document.getElementById("yearFrom")?.value || undefined,
     yearproduction_to: document.getElementById("yearTo")?.value || undefined,
-    price_min: document.getElementById("priceMin")?.value || undefined,
-    price_max: document.getElementById("priceMax")?.value || undefined
-  };
+    price_min: document.getElement_
