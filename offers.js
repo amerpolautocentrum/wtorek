@@ -1,27 +1,28 @@
-// Plik offers.js – ładowanie 6 losowych ogłoszeń i poprawne filtrowanie z API FOX
+// Plik offers.js – wersja z ładowaniem filtrów z gotowej listy marek
 
-async function fetchAllOffers(pagesToFetch = 7) {
-  let allOffers = [];
+const markiFox = [
+  "audi", "bmw", "chevrolet", "chrysler", "citroen", "cupra", "dacia", "daewoo", "daihatsu", "dodge",
+  "fiat", "ford", "gmc", "honda", "hummer", "hyundai", "infiniti", "jaguar", "jeep", "kia",
+  "lancia", "land-rover", "lexus", "lincoln", "mazda", "mercedes-benz", "mg", "mini", "mitsubishi", "nissan",
+  "opel", "peugeot", "pontiac", "porsche", "renault", "rolls-royce", "rover", "saab", "seat", "skoda",
+  "smart", "ssangyong", "subaru", "suzuki", "tesla", "toyota", "volkswagen", "volvo"
+];
 
-  for (let page = 1; page <= pagesToFetch; page++) {
-    try {
-      const response = await fetch("https://api-offers.vercel.app/api/offers", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ page })
-      });
+function populateStaticFilters() {
+  const fillSelect = (id, values, label) => {
+    const select = document.getElementById(id);
+    if (!select) return;
+    select.innerHTML = `<option value="">${label}</option>`;
+    values.forEach(v => {
+      const option = document.createElement("option");
+      option.value = v;
+      option.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+      select.appendChild(option);
+    });
+  };
 
-      const result = await response.json();
-      const offersPage = Object.values(result.offers || {});
-      console.log(`Strona ${page} z API:`, result);
-      allOffers = allOffers.concat(offersPage);
-    } catch (error) {
-      console.error("Błąd pobierania strony ofert:", error);
-    }
-  }
-
-  console.log("WSZYSTKIE OFERTY:", allOffers);
-  return allOffers;
+  fillSelect("brand", markiFox, "Wybierz markę");
+  // Modele, roczniki, ceny zostaną wypełnione po kliknięciu FILTRUJ, gdy znamy markę/model
 }
 
 function collectFilters() {
@@ -35,6 +36,21 @@ function collectFilters() {
   };
 }
 
+async function fetchFilteredOffers(filters = {}) {
+  try {
+    const response = await fetch("https://api-offers.vercel.app/api/offers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ filters })
+    });
+    const result = await response.json();
+    return Object.values(result.offers || {});
+  } catch (error) {
+    console.error("Błąd pobierania ofert:", error);
+    return [];
+  }
+}
+
 function displayOffers(offers) {
   const container = document.getElementById("offers-container");
   container.innerHTML = "";
@@ -45,76 +61,31 @@ function displayOffers(offers) {
   }
 
   offers.forEach(o => {
+    const d = o.data || o;
     const div = document.createElement("div");
     div.className = "offer-item";
-    const imageSrc = Array.isArray(o.mainimage) && o.mainimage.length ? o.mainimage[0].source : "https://via.placeholder.com/200";
-
     div.innerHTML = `
-      <h2>${o.id_make || ''} ${o.id_model || ''}</h2>
-      <img src="${imageSrc}" alt="miniatura auta" width="200">
-      <p>${o.yearproduction || ''} • ${o.power || ''} KM • ${o.mileage || ''} km</p>
-      <p>Cena: ${o.price || 'brak'} PLN</p>
+      <h2>${d.id_make || ''} ${d.id_model || ''}</h2>
+      <img src="${d.mainimage?.[0]?.source || 'https://via.placeholder.com/200'}" alt="miniatura auta" width="200">
+      <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
+      <p>Cena: ${d.price || 'brak'} PLN</p>
     `;
-
     if (o.id) {
       div.addEventListener("click", () => {
-        window.open("https://oferta.amer-pol.com/oferta/" + o.id, "_blank");
+        window.open("https://oferta.amer-pol.com/m/komis-offer/index/" + o.id, "_blank");
       });
     }
-
     container.appendChild(div);
   });
 }
 
-function populateFilters(offers) {
-  const normalize = val => val?.toString().trim().toUpperCase();
-
-  const years = [...new Set(offers.map(o => parseInt(o.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
-  const prices = offers.map(o => parseInt(o.price)).filter(Boolean).sort((a, b) => a - b);
-  const makes = [...new Set(offers.map(o => normalize(o.id_make)).filter(Boolean))].sort();
-  const models = [...new Set(offers.map(o => normalize(o.id_model)).filter(Boolean))].sort();
-
-  const fillSelect = (id, values, label) => {
-    const select = document.getElementById(id);
-    if (!select) return;
-    select.innerHTML = `<option value="">${label}</option>`;
-    values.forEach(v => {
-      const option = document.createElement("option");
-      option.value = v;
-      option.textContent = v;
-      select.appendChild(option);
-    });
-  };
-
-  fillSelect("brand", makes, "Wybierz markę");
-  fillSelect("model", models, "Wybierz model");
-  fillSelect("yearFrom", years, "Rocznik od");
-  fillSelect("yearTo", years.slice().reverse(), "Rocznik do");
-  fillSelect("priceMin", prices, "Cena min");
-  fillSelect("priceMax", prices.slice().reverse(), "Cena max");
-
-  console.log("FILTRY UZUPEŁNIONE");
-}
-
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchAllOffers();
-  const filtered = offers.filter(o => {
-    return (!filters.id_make || o.id_make?.toUpperCase() === filters.id_make?.toUpperCase()) &&
-           (!filters.id_model || o.id_model?.toUpperCase() === filters.id_model?.toUpperCase()) &&
-           (!filters.yearproduction_from || parseInt(o.yearproduction) >= parseInt(filters.yearproduction_from)) &&
-           (!filters.yearproduction_to || parseInt(o.yearproduction) <= parseInt(filters.yearproduction_to)) &&
-           (!filters.price_min || parseInt(o.price) >= parseInt(filters.price_min)) &&
-           (!filters.price_max || parseInt(o.price) <= parseInt(filters.price_max));
-  });
-  displayOffers(filtered);
+  const offers = await fetchFilteredOffers(filters);
+  displayOffers(offers);
 }
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
 
-(async () => {
-  const allOffers = await fetchAllOffers();
-  populateFilters(allOffers);
-  const shuffled = allOffers.sort(() => 0.5 - Math.random());
-  displayOffers(shuffled.slice(0, 6));
-})();
+// Inicjalizacja – tylko lista marek
+populateStaticFilters();
