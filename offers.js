@@ -23,7 +23,6 @@ function populateDynamicFilters(offers, selectedBrand = null) {
   const models = new Set();
   const years = new Set();
   const prices = [];
-
   const debugModels = [];
 
   offers.forEach(o => {
@@ -31,7 +30,7 @@ function populateDynamicFilters(offers, selectedBrand = null) {
 
     if (!selectedBrand || d.id_make?.toLowerCase() === selectedBrand.toLowerCase()) {
       if (selectedBrand && d.id_make?.toLowerCase() === selectedBrand.toLowerCase()) {
-        debugModels.push(d); // zbieramy oferty do sprawdzenia
+        debugModels.push(d);
       }
 
       if (d.id_model && typeof d.id_model === "string") {
@@ -87,20 +86,25 @@ async function fetchFilteredOffers(filters = {}, page = 1) {
       body: JSON.stringify({ filters, page })
     });
     const result = await response.json();
-    return Object.values(result.offers || {});
+    return result;
   } catch (error) {
     console.error("Błąd pobierania ofert:", error);
-    return [];
+    return { offers: {}, page: 1, pages: 1 };
   }
 }
 
-async function fetchAllPages(limitPages = 7) {
+async function fetchAllPagesDynamic() {
   let allOffers = [];
-  for (let page = 1; page <= limitPages; page++) {
-    const pageOffers = await fetchFilteredOffers({}, page);
-    if (!pageOffers.length) break;
-    allOffers = allOffers.concat(pageOffers);
+  let result = await fetchFilteredOffers({}, 1);
+  let pages = result.pages || 1;
+
+  allOffers = Object.values(result.offers || []);
+
+  for (let page = 2; page <= pages; page++) {
+    const res = await fetchFilteredOffers({}, page);
+    allOffers = allOffers.concat(Object.values(res.offers || []));
   }
+
   return allOffers;
 }
 
@@ -158,7 +162,8 @@ async function fetchBrands() {
 
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchFilteredOffers(filters);
+  const result = await fetchFilteredOffers(filters);
+  const offers = Object.values(result.offers || {});
   populateDynamicFilters(offers, filters.id_make);
   displayOffers(offers);
 }
@@ -173,6 +178,6 @@ document.getElementById("brand")?.addEventListener("change", () => {
   const brands = await fetchBrands();
   fillSelect("brand", brands, "Wybierz markę");
 
-  offersCache = await fetchAllPages(7);
+  offersCache = await fetchAllPagesDynamic(); // dynamiczne pobieranie wszystkich stron
   populateDynamicFilters(offersCache);
 })();
