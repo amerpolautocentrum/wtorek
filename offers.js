@@ -1,3 +1,5 @@
+// Plik offers.js – ładowanie 6 losowych ogłoszeń i poprawne filtrowanie z API FOX
+
 async function fetchAllOffers(pagesToFetch = 7) {
   let allOffers = [];
 
@@ -10,8 +12,8 @@ async function fetchAllOffers(pagesToFetch = 7) {
       });
 
       const result = await response.json();
-      console.log(`Strona ${page} z API:`, result);
       const offersPage = Object.values(result.offers || {});
+      console.log(`Strona ${page} z API:`, result);
       allOffers = allOffers.concat(offersPage);
     } catch (error) {
       console.error("Błąd pobierania strony ofert:", error);
@@ -45,17 +47,21 @@ function displayOffers(offers) {
   offers.forEach(o => {
     const div = document.createElement("div");
     div.className = "offer-item";
+    const imageSrc = Array.isArray(o.mainimage) && o.mainimage.length ? o.mainimage[0].source : "https://via.placeholder.com/200";
+
     div.innerHTML = `
       <h2>${o.id_make || ''} ${o.id_model || ''}</h2>
-      <img src="${Array.isArray(o.mainimage) ? o.mainimage[0]?.source : ''}" alt="miniatura auta" width="200">
+      <img src="${imageSrc}" alt="miniatura auta" width="200">
       <p>${o.yearproduction || ''} • ${o.power || ''} KM • ${o.mileage || ''} km</p>
       <p>Cena: ${o.price || 'brak'} PLN</p>
     `;
+
     if (o.id) {
       div.addEventListener("click", () => {
         window.open("https://oferta.amer-pol.com/oferta/" + o.id, "_blank");
       });
     }
+
     container.appendChild(div);
   });
 }
@@ -86,6 +92,7 @@ function populateFilters(offers) {
   fillSelect("yearTo", years.slice().reverse(), "Rocznik do");
   fillSelect("priceMin", prices, "Cena min");
   fillSelect("priceMax", prices.slice().reverse(), "Cena max");
+
   console.log("FILTRY UZUPEŁNIONE");
 }
 
