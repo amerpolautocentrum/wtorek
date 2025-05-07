@@ -49,5 +49,4 @@ function collectFilters() {
     id_make: document.getElementById("brand")?.value || undefined,
     id_model: document.getElementById("model")?.value || undefined,
     yearproduction_from: document.getElementById("yearFrom")?.value || undefined,
-    yearproduction_to: document.getElementById("yearTo")?.value || undefined,
-    price_min: document.getElement_
+    yearproduction_to: document.getElement_
