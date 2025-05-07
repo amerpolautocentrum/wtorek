@@ -1,5 +1,3 @@
-// Plik offers.js – kompletny i od podstaw naprawiony, zgodny z API FOX
-
 async function fetchAllOffers(pagesToFetch = 7) {
   let allOffers = [];
 
@@ -12,7 +10,7 @@ async function fetchAllOffers(pagesToFetch = 7) {
       });
 
       const result = await response.json();
-      console.log(`Strona ${page} z API:`, result);
+      console.log("Strona", page, "z API:", result);
       const offersPage = Object.values(result.offers || {});
       allOffers = allOffers.concat(offersPage);
     } catch (error) {
@@ -45,7 +43,7 @@ function displayOffers(offers) {
   }
 
   offers.forEach(o => {
-    const d = o?.data || {};
+    const d = o.data || {};
     const div = document.createElement("div");
     div.className = "offer-item";
     div.innerHTML = `
@@ -89,13 +87,15 @@ function populateFilters(offers) {
   fillSelect("yearTo", years.slice().reverse(), "Rocznik do");
   fillSelect("priceMin", prices, "Cena min");
   fillSelect("priceMax", prices.slice().reverse(), "Cena max");
+
+  console.log("FILTRY UZUPEŁNIONE");
 }
 
 async function filterOffers() {
   const filters = collectFilters();
-  const offers = await fetchAllOffers();
-  const filtered = offers.filter(o => {
-    const d = o?.data || {};
+  const allOffers = await fetchAllOffers();
+  const filtered = allOffers.filter(o => {
+    const d = o.data || {};
     return (!filters.id_make || d.id_make === filters.id_make) &&
            (!filters.id_model || d.id_model === filters.id_model) &&
            (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
@@ -103,6 +103,7 @@ async function filterOffers() {
            (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
            (!filters.price_max || parseInt(d.price) <= parseInt(filters.price_max));
   });
+
   displayOffers(filtered);
 }
 
