@@ -38,6 +38,11 @@ function populateDynamicFilters(offers, selectedBrand = null) {
   });
 
   const sortedModels = [...models].sort();
+
+  if (selectedBrand) {
+    console.log(`🔍 Modele dla marki ${selectedBrand}:`, sortedModels);
+  }
+
   const sortedYears = [...years].sort((a, b) => a - b);
   const minPrice = Math.min(...prices);
   const maxPrice = Math.max(...prices);
@@ -160,6 +165,6 @@ document.getElementById("brand")?.addEventListener("change", () => {
   const brands = await fetchBrands();
   fillSelect("brand", brands, "Wybierz markę");
 
-  offersCache = await fetchAllPages(7); // pobieramy do 7 stron ofert (~350 aut)
+  offersCache = await fetchAllPages(7);
   populateDynamicFilters(offersCache);
 })();
