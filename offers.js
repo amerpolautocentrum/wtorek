@@ -81,6 +81,16 @@ async function fetchFilteredOffers(filters = {}, page = 1) {
   }
 }
 
+async function fetchAllPages(limitPages = 7) {
+  let allOffers = [];
+  for (let page = 1; page <= limitPages; page++) {
+    const pageOffers = await fetchFilteredOffers({}, page);
+    if (!pageOffers.length) break;
+    allOffers = allOffers.concat(pageOffers);
+  }
+  return allOffers;
+}
+
 function displayOffers(offers) {
   const container = document.getElementById("offers-container");
   container.innerHTML = "";
@@ -150,6 +160,6 @@ document.getElementById("brand")?.addEventListener("change", () => {
   const brands = await fetchBrands();
   fillSelect("brand", brands, "Wybierz markę");
 
-  offersCache = await fetchFilteredOffers();
+  offersCache = await fetchAllPages(7); // pobieramy do 7 stron ofert (~350 aut)
   populateDynamicFilters(offersCache);
 })();
