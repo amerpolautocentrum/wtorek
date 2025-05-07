@@ -10,7 +10,7 @@ async function fetchAllOffers(pagesToFetch = 7) {
       });
 
       const result = await response.json();
-      console.log("Strona", page, "z API:", result);
+      console.log(`Strona ${page} z API:`, result);
       const offersPage = Object.values(result.offers || {});
       allOffers = allOffers.concat(offersPage);
     } catch (error) {
@@ -43,14 +43,13 @@ function displayOffers(offers) {
   }
 
   offers.forEach(o => {
-    const d = o.data || {};
     const div = document.createElement("div");
     div.className = "offer-item";
     div.innerHTML = `
-      <h2>${d.id_make || ''} ${d.id_model || ''}</h2>
-      <img src="${d.mainimage || 'https://via.placeholder.com/200'}" alt="miniatura auta" width="200">
-      <p>${d.yearproduction || ''} • ${d.power || ''} KM • ${d.mileage || ''} km</p>
-      <p>Cena: ${d.price || 'brak'} PLN</p>
+      <h2>${o.id_make || ''} ${o.id_model || ''}</h2>
+      <img src="${Array.isArray(o.mainimage) ? o.mainimage[0]?.source : ''}" alt="miniatura auta" width="200">
+      <p>${o.yearproduction || ''} • ${o.power || ''} KM • ${o.mileage || ''} km</p>
+      <p>Cena: ${o.price || 'brak'} PLN</p>
     `;
     if (o.id) {
       div.addEventListener("click", () => {
@@ -62,12 +61,12 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-  const normalize = val => val?.toString().trim();
+  const normalize = val => val?.toString().trim().toUpperCase();
 
-  const years = [...new Set(offers.map(o => parseInt(o.data?.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
-  const prices = offers.map(o => parseInt(o.data?.price)).filter(Boolean).sort((a, b) => a - b);
-  const makes = [...new Set(offers.map(o => normalize(o.data?.id_make)).filter(Boolean))].sort();
-  const models = [...new Set(offers.map(o => normalize(o.data?.id_model)).filter(Boolean))].sort();
+  const years = [...new Set(offers.map(o => parseInt(o.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
+  const prices = offers.map(o => parseInt(o.price)).filter(Boolean).sort((a, b) => a - b);
+  const makes = [...new Set(offers.map(o => normalize(o.id_make)).filter(Boolean))].sort();
+  const models = [...new Set(offers.map(o => normalize(o.id_model)).filter(Boolean))].sort();
 
   const fillSelect = (id, values, label) => {
     const select = document.getElementById(id);
@@ -87,23 +86,20 @@ function populateFilters(offers) {
   fillSelect("yearTo", years.slice().reverse(), "Rocznik do");
   fillSelect("priceMin", prices, "Cena min");
   fillSelect("priceMax", prices.slice().reverse(), "Cena max");
-
   console.log("FILTRY UZUPEŁNIONE");
 }
 
 async function filterOffers() {
   const filters = collectFilters();
-  const allOffers = await fetchAllOffers();
-  const filtered = allOffers.filter(o => {
-    const d = o.data || {};
-    return (!filters.id_make || d.id_make === filters.id_make) &&
-           (!filters.id_model || d.id_model === filters.id_model) &&
-           (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
-           (!filters.yearproduction_to || parseInt(d.yearproduction) <= parseInt(filters.yearproduction_to)) &&
-           (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
-           (!filters.price_max || parseInt(d.price) <= parseInt(filters.price_max));
+  const offers = await fetchAllOffers();
+  const filtered = offers.filter(o => {
+    return (!filters.id_make || o.id_make?.toUpperCase() === filters.id_make?.toUpperCase()) &&
+           (!filters.id_model || o.id_model?.toUpperCase() === filters.id_model?.toUpperCase()) &&
+           (!filters.yearproduction_from || parseInt(o.yearproduction) >= parseInt(filters.yearproduction_from)) &&
+           (!filters.yearproduction_to || parseInt(o.yearproduction) <= parseInt(filters.yearproduction_to)) &&
+           (!filters.price_min || parseInt(o.price) >= parseInt(filters.price_min)) &&
+           (!filters.price_max || parseInt(o.price) <= parseInt(filters.price_max));
   });
-
   displayOffers(filtered);
 }
 
