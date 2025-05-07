@@ -118,7 +118,10 @@ function displayOffers(offers) {
 
 async function fetchBrands() {
   try {
-    const response = await fetch("/api/brands");
+    const response = await fetch("https://api-offers.vercel.app/api/brands", {
+      method: "GET",
+      mode: "cors"
+    });
     return await response.json();
   } catch (e) {
     console.error("Błąd ładowania marek:", e);
