@@ -1,4 +1,4 @@
-// Plik offers.js – z poprawionym filtrowaniem i obsługą odpowiedzi z FOX API
+// Plik offers.js – kompletny i od podstaw naprawiony, zgodny z API FOX
 
 async function fetchAllOffers(pagesToFetch = 7) {
   let allOffers = [];
@@ -12,13 +12,15 @@ async function fetchAllOffers(pagesToFetch = 7) {
       });
 
       const result = await response.json();
-      const offersPage = Object.values(result.offers || {}); // zamiana obiektu na tablicę
+      console.log(`Strona ${page} z API:`, result);
+      const offersPage = Object.values(result.offers || {});
       allOffers = allOffers.concat(offersPage);
     } catch (error) {
       console.error("Błąd pobierania strony ofert:", error);
     }
   }
 
+  console.log("WSZYSTKIE OFERTY:", allOffers);
   return allOffers;
 }
 
@@ -43,7 +45,7 @@ function displayOffers(offers) {
   }
 
   offers.forEach(o => {
-    const d = o.data || {};
+    const d = o?.data || {};
     const div = document.createElement("div");
     div.className = "offer-item";
     div.innerHTML = `
@@ -62,7 +64,7 @@ function displayOffers(offers) {
 }
 
 function populateFilters(offers) {
-  const normalize = val => val?.toString().trim().toUpperCase();
+  const normalize = val => val?.toString().trim();
 
   const years = [...new Set(offers.map(o => parseInt(o.data?.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
   const prices = offers.map(o => parseInt(o.data?.price)).filter(Boolean).sort((a, b) => a - b);
@@ -93,9 +95,9 @@ async function filterOffers() {
   const filters = collectFilters();
   const offers = await fetchAllOffers();
   const filtered = offers.filter(o => {
-    const d = o.data || {};
-    return (!filters.id_make || d.id_make?.toUpperCase() === filters.id_make?.toUpperCase()) &&
-           (!filters.id_model || d.id_model?.toUpperCase() === filters.id_model?.toUpperCase()) &&
+    const d = o?.data || {};
+    return (!filters.id_make || d.id_make === filters.id_make) &&
+           (!filters.id_model || d.id_model === filters.id_model) &&
            (!filters.yearproduction_from || parseInt(d.yearproduction) >= parseInt(filters.yearproduction_from)) &&
            (!filters.yearproduction_to || parseInt(d.yearproduction) <= parseInt(filters.yearproduction_to)) &&
            (!filters.price_min || parseInt(d.price) >= parseInt(filters.price_min)) &&
