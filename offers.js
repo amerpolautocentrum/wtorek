@@ -33,8 +33,9 @@ function populateDynamicFilters(offers, selectedBrand = null) {
         debugModels.push(d);
       }
 
-      if (d.id_model && typeof d.id_model === "string") {
-        models.add(d.id_model);
+      const model = d.id_model || d.model || d.title || d.description;
+      if (model && typeof model === "string") {
+        models.add(model.toLowerCase());
       }
     }
 
@@ -45,7 +46,7 @@ function populateDynamicFilters(offers, selectedBrand = null) {
   const sortedModels = [...models].sort();
 
   if (selectedBrand) {
-    console.log(`🔍 Modele dla marki ${selectedBrand}:`, sortedModels);
+    console.log(`🔍 Modele (z fallbackiem) dla marki ${selectedBrand}:`, sortedModels);
     console.log(`📦 Oferty marki ${selectedBrand} – pierwsze 3:`);
     console.log(debugModels.slice(0, 3));
   }
@@ -98,11 +99,11 @@ async function fetchAllPagesDynamic() {
   let result = await fetchFilteredOffers({}, 1);
   let pages = result.pages || 1;
 
-  allOffers = Object.values(result.offers || []);
+  allOffers = Object.values(result.offers || {});
 
   for (let page = 2; page <= pages; page++) {
     const res = await fetchFilteredOffers({}, page);
-    allOffers = allOffers.concat(Object.values(res.offers || []));
+    allOffers = allOffers.concat(Object.values(res.offers || {}));
   }
 
   return allOffers;
@@ -178,6 +179,6 @@ document.getElementById("brand")?.addEventListener("change", () => {
   const brands = await fetchBrands();
   fillSelect("brand", brands, "Wybierz markę");
 
-  offersCache = await fetchAllPagesDynamic(); // dynamiczne pobieranie wszystkich stron
+  offersCache = await fetchAllPagesDynamic();
   populateDynamicFilters(offersCache);
 })();
