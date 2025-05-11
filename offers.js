@@ -1,4 +1,3 @@
-
 let offersCache = [];
 let brandModelMap = {};
 
@@ -18,8 +17,13 @@ function fillSelect(id, values, label) {
 }
 
 function updateModelOptions(brand) {
-  const models = brandModelMap[brand.toLowerCase()] || [];
-  fillSelect("model", models, "Wybierz model");
+  fetch("https://api-offers.vercel.app/api/models?brand=" + encodeURIComponent(brand))
+    .then(res => res.json())
+    .then(models => {
+      brandModelMap[brand.toLowerCase()] = models;
+      fillSelect("model", models, "Wybierz model");
+    })
+    .catch(e => console.error("Błąd ładowania modeli:", e));
 }
 
 function collectFilters() {
@@ -88,12 +92,11 @@ function displayOffers(offers) {
 
 async function initFilters() {
   try {
-    const response = await fetch("https://api-offers.vercel.app/api/all-models");
-    brandModelMap = await response.json();
-    const brands = Object.keys(brandModelMap).sort();
-    fillSelect("brand", brands, "Wybierz markę");
+    const res = await fetch("https://api-offers.vercel.app/api/brands");
+    const brands = await res.json();
+    fillSelect("brand", brands.sort(), "Wybierz markę");
   } catch (e) {
-    console.error("Błąd ładowania marek i modeli:", e);
+    console.error("Błąd ładowania marek:", e);
   }
 }
 
