@@ -95,7 +95,10 @@ async function initFiltersAndOffers() {
     // Unikalne marki
     const brands = [...new Set(allOffers.map(o => o.id_make?.toLowerCase()).filter(Boolean))].sort();
     fillSelect("brand", brands, "Wybierz markę");
-    displayOffers(allOffers); // od razu pokaż wszystko
+
+    // Pokaż tylko 8 najnowszych ofert
+    const sorted = allOffers.sort((a, b) => parseInt(b.id) - parseInt(a.id));
+    displayOffers(sorted.slice(0, 8));
   } catch (e) {
     console.error("Błąd ładowania all-offers.json:", e);
   }
