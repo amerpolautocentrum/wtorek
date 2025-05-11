@@ -1,6 +1,5 @@
 
-let offersCache = [];
-let brandModelMap = {};
+let allOffers = [];
 
 function fillSelect(id, values, label) {
   const select = document.getElementById(id);
@@ -18,7 +17,12 @@ function fillSelect(id, values, label) {
 }
 
 function updateModelOptions(brand) {
-  const models = brandModelMap[brand.toLowerCase()] || [];
+  const models = [...new Set(
+    allOffers
+      .filter(o => o.id_make?.toLowerCase() === brand.toLowerCase())
+      .map(o => o.id_model?.toLowerCase())
+      .filter(Boolean)
+  )].sort();
   fillSelect("model", models, "Wybierz model");
 }
 
@@ -33,19 +37,16 @@ function collectFilters() {
   };
 }
 
-async function fetchFilteredOffers(filters = {}, page = 1) {
-  try {
-    const response = await fetch("https://api-offers.vercel.app/api/offers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ filters, page })
-    });
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error("Błąd pobierania ofert:", error);
-    return { offers: {}, page: 1, pages: 1 };
-  }
+function filterOffersLocally(filters = {}) {
+  return allOffers.filter(o => {
+    const makeOk = !filters.id_make || o.id_make?.toLowerCase() === filters.id_make.toLowerCase();
+    const modelOk = !filters.id_model || o.id_model?.toLowerCase() === filters.id_model.toLowerCase();
+    const yearOk = (!filters.yearproduction_from || parseInt(o.yearproduction) >= parseInt(filters.yearproduction_from)) &&
+                   (!filters.yearproduction_to || parseInt(o.yearproduction) <= parseInt(filters.yearproduction_to));
+    const priceOk = (!filters.price_min || parseFloat(o.price) >= parseFloat(filters.price_min)) &&
+                    (!filters.price_max || parseFloat(o.price) <= parseFloat(filters.price_max));
+    return makeOk && modelOk && yearOk && priceOk;
+  });
 }
 
 function displayOffers(offers) {
@@ -86,22 +87,24 @@ function displayOffers(offers) {
   });
 }
 
-async function initFilters() {
+async function initFiltersAndOffers() {
   try {
-    const response = await fetch("https://api-offers.vercel.app/api/models");
-    brandModelMap = await response.json();
-    const brands = Object.keys(brandModelMap).sort();
+    const response = await fetch("/all-offers.json");
+    allOffers = await response.json();
+
+    // Unikalne marki
+    const brands = [...new Set(allOffers.map(o => o.id_make?.toLowerCase()).filter(Boolean))].sort();
     fillSelect("brand", brands, "Wybierz markę");
+    displayOffers(allOffers); // od razu pokaż wszystko
   } catch (e) {
-    console.error("Błąd ładowania marek i modeli:", e);
+    console.error("Błąd ładowania all-offers.json:", e);
   }
 }
 
-async function filterOffers() {
+function filterOffers() {
   const filters = collectFilters();
-  const result = await fetchFilteredOffers(filters);
-  const offers = Object.values(result.offers || {});
-  displayOffers(offers);
+  const filtered = filterOffersLocally(filters);
+  displayOffers(filtered);
 }
 
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
@@ -113,5 +116,5 @@ document.getElementById("brand")?.addEventListener("change", () => {
 });
 
 (async function init() {
-  await initFilters();
+  await initFiltersAndOffers();
 })();
