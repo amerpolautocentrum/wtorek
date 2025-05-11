@@ -291,3 +291,15 @@ html, body {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     }
 }
+.notice {
+    background-color: #f0f4ff;
+    padding: 1em 1.5em;
+    margin: 1em auto;
+    border-left: 4px solid #007bff;
+    border-radius: 4px;
+    font-size: 1.1em;
+    color: #333;
+    font-family: 'Barlow Condensed', sans-serif;
+    max-width: 1200px;
+    text-align: center;
+}
