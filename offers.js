@@ -10,7 +10,7 @@ function fillSelect(id, values, label) {
     if (typeof v === "string" || typeof v === "number") {
       const option = document.createElement("option");
       option.value = v;
-      option.textContent = v.charAt(0).toUpperCase() + v.slice(1);
+      option.textContent = v;
       select.appendChild(option);
     }
   });
@@ -24,6 +24,35 @@ function updateModelOptions(brand) {
       .filter(Boolean)
   )].sort();
   fillSelect("model", models, "Wybierz model");
+
+  updateYearAndPriceFilters(brand);
+}
+
+function updateYearAndPriceFilters(brand = null) {
+  const filtered = brand
+    ? allOffers.filter(o => o.id_make?.toLowerCase() === brand.toLowerCase())
+    : allOffers;
+
+  const years = [...new Set(filtered.map(o => parseInt(o.yearproduction)).filter(Boolean))].sort((a, b) => a - b);
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+
+  fillSelect("yearFrom", years, "Od roku");
+  fillSelect("yearTo", years.slice().reverse(), "Do roku");
+
+  const prices = filtered
+    .map(o => parseInt(o.price))
+    .filter(p => !isNaN(p));
+  const minPrice = Math.floor(Math.min(...prices || [0]) / 5000) * 5000;
+  const maxPrice = Math.ceil(Math.max(...prices || [50000]) / 5000) * 5000;
+
+  const priceSteps = [];
+  for (let p = minPrice; p <= maxPrice; p += 5000) {
+    priceSteps.push(p);
+  }
+
+  fillSelect("priceMin", priceSteps, "Cena od");
+  fillSelect("priceMax", priceSteps.slice().reverse(), "Cena do");
 }
 
 function collectFilters() {
@@ -41,10 +70,12 @@ function filterOffersLocally(filters = {}) {
   return allOffers.filter(o => {
     const makeOk = !filters.id_make || o.id_make?.toLowerCase() === filters.id_make.toLowerCase();
     const modelOk = !filters.id_model || o.id_model?.toLowerCase() === filters.id_model.toLowerCase();
-    const yearOk = (!filters.yearproduction_from || parseInt(o.yearproduction) >= parseInt(filters.yearproduction_from)) &&
-                   (!filters.yearproduction_to || parseInt(o.yearproduction) <= parseInt(filters.yearproduction_to));
-    const priceOk = (!filters.price_min || parseFloat(o.price) >= parseFloat(filters.price_min)) &&
-                    (!filters.price_max || parseFloat(o.price) <= parseFloat(filters.price_max));
+    const year = parseInt(o.yearproduction);
+    const price = parseInt(o.price);
+    const yearOk = (!filters.yearproduction_from || year >= parseInt(filters.yearproduction_from)) &&
+                   (!filters.yearproduction_to || year <= parseInt(filters.yearproduction_to));
+    const priceOk = (!filters.price_min || price >= parseInt(filters.price_min)) &&
+                    (!filters.price_max || price <= parseInt(filters.price_max));
     return makeOk && modelOk && yearOk && priceOk;
   });
 }
@@ -92,11 +123,10 @@ async function initFiltersAndOffers() {
     const response = await fetch("/all-offers.json");
     allOffers = await response.json();
 
-    // Unikalne marki
     const brands = [...new Set(allOffers.map(o => o.id_make?.toLowerCase()).filter(Boolean))].sort();
     fillSelect("brand", brands, "Wybierz markę");
 
-    // Pokaż tylko 8 najnowszych ofert
+    updateYearAndPriceFilters();
     const sorted = allOffers.sort((a, b) => parseInt(b.id) - parseInt(a.id));
     displayOffers(sorted.slice(0, 8));
   } catch (e) {
@@ -113,9 +143,7 @@ function filterOffers() {
 document.getElementById("filter-button")?.addEventListener("click", filterOffers);
 document.getElementById("brand")?.addEventListener("change", () => {
   const selectedBrand = document.getElementById("brand")?.value;
-  if (selectedBrand) {
-    updateModelOptions(selectedBrand);
-  }
+  updateModelOptions(selectedBrand);
 });
 
 (async function init() {
