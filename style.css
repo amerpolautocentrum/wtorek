@@ -292,10 +292,9 @@ html, body {
     }
 }
 .notice {
-  background-color: #1a1a1a; /* dopasowany do tła strony */
+  background-color: #1a1a1a; /* spójne z tłem strony */
   padding: 1em 1.5em;
   margin: 1em auto;
-  border-left: 4px solid #ff4c4c; /* czerwony akcent pasujący do przycisków */
   border-radius: 4px;
   font-size: 1.1em;
   color: #fff;
