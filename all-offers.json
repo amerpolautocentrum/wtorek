@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "id_make": "audi",
+    "id_model": "a4",
+    "yearproduction": "2018",
+    "power": "190",
+    "mileage": "120000",
+    "price": "68000",
+    "mainimage": [
+      {
+        "source": "https://via.placeholder.com/200?text=Audi+A4"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "id_make": "bmw",
+    "id_model": "x5",
+    "yearproduction": "2020",
+    "power": "265",
+    "mileage": "85000",
+    "price": "139000",
+    "mainimage": [
+      {
+        "source": "https://via.placeholder.com/200?text=BMW+X5"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "id_make": "ford",
+    "id_model": "focus",
+    "yearproduction": "2017",
+    "power": "120",
+    "mileage": "98000",
+    "price": "42000",
+    "mainimage": [
+      {
+        "source": "https://via.placeholder.com/200?text=Ford+Focus"
+      }
+    ]
+  }
+]
