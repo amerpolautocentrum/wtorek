@@ -1,71 +1,59 @@
-/* offers.html - dodatkowe style */
-#filters {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 15px;
-  margin: 30px 0;
-  padding: 20px;
-  background: #f8f8f8;
-  border-radius: 8px;
-}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Auta z USA na sprzedaż | Oferty samochodów – Amer-Pol Auto Centrum</title>
+  <meta name="description" content="Zobacz nasze aktualne oferty aut sprowadzanych z USA i Kanady. Samochody z aukcji Copart i IAAI – sprowadzane wyłącznie na zamówienie.">
+  <meta name="keywords" content="auta z USA, samochody z USA, import samochodów, auta na sprzedaż, ogłoszenia z USA, auta z Kanady, auta na zamówienie">
+  <link rel="stylesheet" href="style.css?v=10" />
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="/">STRONA GŁÓWNA</a>
+  </nav>
 
-#filters select, #filter-button {
-  padding: 10px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-}
+  <div class="offers-page">
+    <h1>Nasze oferty</h1>
 
-#filter-button {
-  background: #cc0000;
-  color: white;
-  border: none;
-  cursor: pointer;
-  grid-column: 1 / -1;
-}
+    <!-- 🔔 Komunikat informacyjny -->
+    <p class="notice">
+      Nie znalazłeś auta, którego szukasz? <strong>Skontaktuj się z nami</strong> – znajdziemy je dla Ciebie!
+    </p>
 
-#offers-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 25px;
-  margin-top: 30px;
-}
+    <div id="filters">
+      <label for="brand">Marka:</label>
+      <select id="brand"><option value="">Wybierz markę</option></select>
 
-.offer-card {
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-}
+      <label for="model">Model:</label>
+      <select id="model"><option value="">Wybierz model</option></select>
 
-.offer-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+      <label for="yearFrom">Rocznik od:</label>
+      <select id="yearFrom"><option value="">Rocznik od</option></select>
 
-.offer-card img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-}
+      <label for="yearTo">Rocznik do:</label>
+      <select id="yearTo"><option value="">Rocznik do</option></select>
 
-.offer-info {
-  padding: 15px;
-}
+      <label for="priceMin">Cena min:</label>
+      <select id="priceMin"><option value="">Cena min</option></select>
 
-.offer-info h3 {
-  margin: 0 0 5px 0;
-  color: #333;
-}
+      <label for="priceMax">Cena max:</label>
+      <select id="priceMax"><option value="">Cena max</option></select>
 
-.offer-info p {
-  margin: 0;
-  color: #666;
-}
+      <button id="filter-button">FILTRUJ</button>
+    </div>
 
-.loading, .no-results {
-  text-align: center;
-  padding: 40px;
-  grid-column: 1 / -1;
-  color: #666;
-}
+    <div id="offers-container"></div>
+
+    <!-- Sekcja SEO jako osobny styl notice -->
+    <p class="notice" style="background-color: #1a1a1a; color: #ddd; font-size: 1.05em;">
+      Amer-Pol Auto Centrum specjalizuje się w sprowadzaniu samochodów z USA i Kanady na indywidualne zamówienie klienta. 
+      Poniższe oferty są jedynie przykładowe i przedstawiają, jakie pojazdy można znaleźć na aukcjach takich jak Copart czy IAAI. 
+      Każdy klient otrzymuje pełne wsparcie – od analizy ofert, przez licytację, transport, aż po przygotowanie auta do rejestracji w Polsce. 
+      Nie prowadzimy sprzedaży aut "od ręki" – działamy wyłącznie na zlecenie.
+    </p>
+  </div>
+
+  <script src="offers.js?v=10"></script>
+</body>
+</html>
