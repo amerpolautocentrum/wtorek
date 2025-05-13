@@ -44,15 +44,15 @@
     </div>
 
     <div id="offers-container"></div>
-  </div>
 
-  <!-- Sekcja SEO w stylu notice -->
-  <p class="notice">
-    Amer-Pol Auto Centrum specjalizuje się w sprowadzaniu samochodów z USA i Kanady na indywidualne zamówienie klienta. 
-    Poniższe oferty są jedynie przykładowe i przedstawiają, jakie pojazdy można znaleźć na aukcjach takich jak Copart czy IAAI. 
-    Każdy klient otrzymuje pełne wsparcie – od analizy ofert, przez licytację, transport, aż po przygotowanie auta do rejestracji w Polsce. 
-    Nie prowadzimy sprzedaży aut "od ręki" – działamy wyłącznie na zlecenie.
-  </p>
+    <!-- Sekcja SEO jako osobny styl notice -->
+    <p class="notice" style="background-color: #1a1a1a; color: #ddd; font-size: 1.05em;">
+      Amer-Pol Auto Centrum specjalizuje się w sprowadzaniu samochodów z USA i Kanady na indywidualne zamówienie klienta. 
+      Poniższe oferty są jedynie przykładowe i przedstawiają, jakie pojazdy można znaleźć na aukcjach takich jak Copart czy IAAI. 
+      Każdy klient otrzymuje pełne wsparcie – od analizy ofert, przez licytację, transport, aż po przygotowanie auta do rejestracji w Polsce. 
+      Nie prowadzimy sprzedaży aut "od ręki" – działamy wyłącznie na zlecenie.
+    </p>
+  </div>
 
   <script src="offers.js?v=10"></script>
 </body>
